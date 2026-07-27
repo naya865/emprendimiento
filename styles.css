@@ -521,75 +521,39 @@ header {
 }
 
 /* ==========================================================================
-   MODAL: ACERCA DE (ABOUT) Y MODAL ÉXITO
+   MODAL: ACERCA DE NOSOTROS
    ========================================================================== */
 .modal-content.style-about {
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: 1fr 1fr;
     max-width: 800px;
 }
 
 .about-img {
-    background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600'); 
+    background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600');
     height: 100%;
+    border-radius: 4px;
 }
 
 .about-text-container {
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     padding: 10px;
 }
 
 .about-text-container h2 {
-    letter-spacing: 2px; 
-    text-transform: uppercase; 
-    margin-bottom: 20px; 
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
     font-size: 1.8rem;
 }
 
 .about-text-container p {
-    color: var(--accent-color); 
-    font-size: 0.95rem; 
-    line-height: 1.7; 
+    color: var(--accent-color);
+    font-size: 0.95rem;
+    line-height: 1.7;
     margin-bottom: 15px;
 }
-
-.about-quote {
-    font-style: italic; 
-    border-left: 2px solid var(--brand-dark); 
-    padding-left: 10px;
-}
-
-.modal-content.style-success {
-    grid-template-columns: 1fr; 
-    max-width: 500px; 
-    text-align: center; 
-    padding: 50px 30px;
-}
-
-.success-icon-wrap {
-    font-size: 3.5rem; 
-    color: var(--brand-dark); 
-    margin-bottom: 20px;
-}
-
-.modal-content.style-success h2 {
-    letter-spacing: 2px; 
-    text-transform: uppercase; 
-    margin-bottom: 15px; 
-    font-size: 1.4rem;
-}
-
-.success-body-box {
-    color: var(--accent-color); 
-    font-size: 0.95rem; 
-    line-height: 1.7; 
-    margin-bottom: 25px; 
-    text-align: left; 
-    background: var(--bg-color); 
-    padding: 20px; 
-    border-radius: 6px; 
-    border: 1px solid var(--border-color);
 }
 
 /* ==========================================================================
