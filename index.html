@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NROSEN studio</title>
+    <!-- Iconos Externos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Estilos Propios -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Banner Promocional -->
+    <div class="promo-banner">
+        Envío gratis en compras mayores a $150.000 • Colección de Verano 2026
+    </div>
+
+    <!-- Navegación y Encabezado -->
+    <header>
+        <div class="nav-top">
+            <input type="text" id="search" class="search-bar" placeholder="Buscar productos...">
+            <div class="controls">
+                <button id="about-toggle" class="btn-icon" title="Acerca de Nosotros">
+                    <i class="fa-solid fa-circle-info"></i>
+                </button>
+                <button id="theme-toggle" class="btn-icon" title="Cambiar Modo">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button class="btn-icon" id="open-cart-btn" title="Ver Carrito">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="brand-header">
+        <h1>NROSEN studio</h1>
+        <p>"Porque sentirse bien también se viste"</p>
+    </div>
+
+    <!-- Grilla de Productos Principal -->
+    <main class="products-container" id="products-gridMAIN">
+        <div class="products-container" id="products-grid" style="margin:0; padding:0; width:100%;"></div>
+    </main>
+
+    <!-- Bolsa Lateral (Carrito) -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Tu Bolsa</h3>
+            <button class="close-cart" id="close-cart-btn">&times;</button>
+        </div>
+        <div class="cart-items-container" id="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-value">$0</span>
+            </div>
+            <div class="payment-methods">
+                <label for="payment-select">Método de Pago:</label>
+                <select id="payment-select" class="payment-select">
+                    <option value="transferencia">Transferencia (Nequi / Bancolombia)</option>
+                    <option value="contraentrega">Pago Contra Entrega</option>
+                    <option value="tarjeta">Tarjeta de Crédito / Débito</option>
+                </select>
+            </div>
+            <button class="btn-checkout" id="checkout-btn">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <!-- Modal: Acerca de Nosotros -->
+    <div class="modal" id="about-modal">
+        <div class="modal-content style-about">
+            <button class="close-modal" id="close-about-btn">&times;</button>
+            <div class="modal-image about-img"></div>
+            <div class="about-text-container">
+                <h2>Nuestra Historia</h2>
+                <p>En <strong>NRosen studio</strong> creemos que la moda va más allá de lo que usas; es una extensión de cómo te quieres sentir.</p>
+                <p>Nacimos bajo la filosofía del bienestar, diseñando y curando prendas que equilibran la elegancia minimalista, texturas reconfortantes y siluetas atemporales.</p>
+                <p class="about-quote">"Porque sentirse bien también se viste."</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Vista de Producto -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal">&times;</button>
+            <div class="modal-image" id="modal-img"></div>
+            <div class="modal-details">
+                <div>
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-desc"></p>
+                </div>
+                <div>
+                    <h3 id="modal-price"></h3>
+                    <button class="btn-add-cart" id="modal-add-btn">Añadir al Carrito</button>
+                </div>
+            </div>
+            <div class="reviews-section">
+                <h4>Reseñas de Clientes</h4>
+                <div id="modal-reviews"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Éxito del Pedido -->
+    <div class="modal" id="order-success-modal">
+        <div class="modal-content style-success">
+            <button class="close-modal" id="close-success-btn">&times;</button>
+            <div class="success-icon-wrap">
+                <i id="modal-msg-icon" class="fa-regular fa-circle-check"></i>
+            </div>
+            <h2 id="modal-msg-title">¡Pedido Registrado!</h2>
+            <div id="success-modal-body" class="success-body-box"></div>
+            <button class="btn-add-cart" id="success-accept-btn" style="margin: 0; width: 100%;">Entendido</button>
+        </div>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Escríbenos</h4>
+                <p><strong>Ubicación:</strong> CC El Tesoro, Local 314</p>
+                <p>El Poblado, Medellín, Colombia</p>
+                <p><strong>Horario:</strong> Lunes a sábado, 10:00 – 21:00</p>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <p><strong>WhatsApp:</strong> +57 300 123 4567</p>
+                <p><strong>Correo:</strong> hola@nrosenstudio.co</p>
+            </div>
+            <div class="footer-col">
+                <h4>Síguenos</h4>
+                <div class="social-icons">
+                    <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://tiktok.com" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://facebook.com" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://whatsapp.com" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 NROSEN studio. Hecho con amor en Colombia.
+        </div>
+    </footer>
+
+    <!-- Lógica de la aplicación -->
+    <script src="script.js"></script>
+</body>
+</html>
