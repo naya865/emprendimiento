@@ -3,50 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NRosen Studio</title>
+    <title>N'ROSEN Studio</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Header y Navegación -->
-   <header>
-    <div class="promo-bar">
-        ENVÍOS GRATIS EN COMPRAS SUPERIORES A $150.000
-    </div>
-    
-    <nav class="nav-container">
-        <!-- 1. Izquierda: Buscador -->
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Buscar productos...">
+    <header>
+        <div class="promo-bar">
+            ENVÍOS GRATIS EN COMPRAS SUPERIORES A $150.000
         </div>
+        
+        <nav class="nav-container">
+            <!-- 1. Izquierda: Buscador -->
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar productos...">
+            </div>
 
-        <!-- 2. Centro: Logo y Slogan -->
-        <div class="logo">
-            <h1>NROSEN <span>studio</span></h1>
-            <p class="tagline">"Porque sentirse bien también se viste"</p>
-        </div>
+            <!-- 2. Centro: Logo y Slogan -->
+            <div class="logo">
+                <h1>NROSEN <span>studio</span></h1>
+                <p class="tagline">"Porque sentirse bien también se viste"</p>
+            </div>
 
-        <!-- 3. Derecha: Acciones (Nosotros, Modo Oscuro, Carrito) -->
-        <div class="nav-actions">
-            <button class="icon-btn" id="about-btn" title="Acerca de nosotros">ℹ️</button>
-            <button class="icon-btn" id="theme-toggle" title="Cambiar tema">🌙</button>
-            <button class="icon-btn" id="cart-btn" title="Ver carrito">
-                🛒
-                <span id="cart-count">0</span>
-            </button>
-        </div>
-    </nav>
-</header>
+            <!-- 3. Derecha: Acciones -->
+            <div class="nav-actions">
+                <button class="icon-btn" id="about-btn" title="Acerca de nosotros">ℹ️</button>
+                <button class="icon-btn" id="theme-toggle" title="Cambiar tema">🌙</button>
+                <button class="icon-btn" id="cart-btn" title="Ver carrito">
+                    🛒
+                    <span id="cart-count">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
 
-    <!-- Grilla Principal de Productos -->
     <main class="main-content">
         <h2 class="section-title">Colección Destacada</h2>
         <div class="products-grid" id="products-container">
-            <!-- Se renderiza dinámicamente con JS -->
+            <!-- Los productos se cargan dinámicamente desde script.js -->
         </div>
     </main>
 
-    <!-- MODAL 1: DETALLE DE PRODUCTO Y MÁS ESTILOS -->
+    <!-- Modal Detalles de Producto -->
     <div class="modal" id="product-modal">
         <div class="modal-content product-detail-layout">
             <button class="close-modal" id="close-product-btn">&times;</button>
@@ -61,7 +59,7 @@
                     <p class="description" id="modal-desc"></p>
                     
                     <div class="size-selector">
-                        <span>Tamaño:</span>
+                        <span>Talla:</span>
                         <div class="size-options">
                             <button class="size-btn active">S</button>
                             <button class="size-btn">M</button>
@@ -69,60 +67,63 @@
                         </div>
                     </div>
 
-                    <button class="btn-primary" id="add-to-cart-modal-btn">Añadir a la Bolsa</button>
+                    <button class="btn-primary" id="add-to-cart-modal-btn">Agregar a la Bolsa</button>
                 </div>
             </div>
 
-            <!-- Sección Dinámica: Más Estilos Disponibles -->
             <div class="styles-section" id="modal-styles-section">
-                <h3>Más Estilos Disponibles</h3>
-                <div class="styles-grid" id="modal-styles-list">
-                    <!-- JS inserta las miniaturas de estilos aquí -->
-                </div>
+                <h3>Estilos disponibles</h3>
+                <div class="styles-grid" id="modal-styles-list"></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 2: ACERCA DE NOSOTROS -->
+    <!-- Modal Acerca de Nosotros -->
     <div class="modal" id="about-modal">
         <div class="modal-content style-about">
             <button class="close-modal" id="close-about-btn">&times;</button>
-            <div class="modal-image about-img"></div>
+            <div class="about-img"></div>
             <div class="about-text-container">
-                <h2>Nuestra Historia</h2>
-                <p>
-                    <strong>NRosen studio</strong> nace para recordar que la belleza comienza con la forma en la que una mujer se siente consigo misma. Cada prenda está diseñada para brindar comodidad, confianza y un toque de elegancia que acompañe cada momento, desde el descanso hasta la rutina diaria.
-                </p>
-                <p>
-                    <strong>Misión:</strong> En N'ROSEN Studio diseñamos y comercializamos ropa interior, pijamas y prendas de descanso que combinan comodidad, calidad y estilo, permitiendo que cada mujer se sienta segura, auténtica y hermosa en cada momento de su día.
-                </p>
-                <p>
-                    <strong>Visión:</strong> Para el año 2030, ser una marca reconocida en Colombia por ofrecer prendas femeninas que destaquen por su diseño, comodidad y calidad, consolidando una comunidad de mujeres que encuentren en N'ROSEN Studio una marca cercana, moderna y confiable.
-                </p>
+                <h2>N'ROSEN Studio</h2>
+                <p>Diseñamos piezas de loungewear y sleepwear concebidas para el descanso y la elegancia del día a día.</p>
+                <p>Nuestra misión es combinar comodidad superior con materiales de la mejor calidad para hacerte sentir bien en todo momento.</p>
             </div>
         </div>
     </div>
 
-    <!-- SIDEBAR: BOLSA DE COMPRAS -->
+    <!-- Modal Confirmación de Compra -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content checkout-success-card">
+            <button class="close-modal" id="close-checkout-modal-btn">&times;</button>
+            <div class="checkout-icon">✨</div>
+            <h2>¡Gracias por tu compra!</h2>
+            <p>Tu pedido en <strong>NROSEN Studio</strong> ha sido registrado con éxito. Nos pondremos en contacto contigo para coordinar el envío.</p>
+            <button class="btn-primary" id="confirm-checkout-btn">Aceptar</button>
+        </div>
+    </div>
+
+    <!-- Sidebar Carrito -->
     <aside class="cart-sidebar" id="cart-sidebar">
         <div class="cart-header">
             <h3>Tu Bolsa</h3>
-            <button class="close-modal" id="close-cart-btn">&times;</button>
+            <button class="close-modal" id="close-cart-btn" style="position:static;">&times;</button>
         </div>
         <div class="cart-items" id="cart-items-container">
-            <!-- Items del carrito JS -->
+            <!-- Items del carrito -->
         </div>
         <div class="cart-footer">
-            <div class="cart-total">Total: <span id="cart-total-price">$0</span></div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <strong id="cart-total-price">$0</strong>
+            </div>
             <div class="checkout-method">
                 <label for="payment-method">Método de Pago:</label>
                 <select id="payment-method">
-                    <option>Transferencia (Nequi / Bancolombia)</option>
-                    <option>Tarjeta de Crédito / Débito</option>
-                    <option>Pago Contra Entrega</option>
+                    <option value="nequi">Transferencia (Nequi / Bancolombia)</option>
+                    <option value="card">Tarjeta de Crédito / Débito</option>
                 </select>
             </div>
-            <button class="btn-primary" id="checkout-btn">Proceder al Pago</button>
+            <button id="checkout-btn" class="btn-primary">Proceder al Pago</button>
         </div>
     </aside>
 

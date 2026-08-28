@@ -1,6 +1,3 @@
-// ==========================================================================
-// PRODUCTOS Y ESTILOS
-// ==========================================================================
 const products = [
     {
         id: 1,
@@ -43,15 +40,11 @@ const products = [
 let cart = [];
 let selectedProductForCart = null;
 
-// ==========================================================================
-// INICIALIZACIÓN
-// ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
     setupEventListeners();
 });
 
-// Renderizar Productos
 function renderProducts(items) {
     const container = document.getElementById('products-container');
     if (!container) return;
@@ -72,7 +65,6 @@ function renderProducts(items) {
     });
 }
 
-// Abrir Modal de Producto
 function openProductModal(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -114,9 +106,7 @@ function openProductModal(productId) {
     document.getElementById('product-modal').classList.add('active');
 }
 
-// Configurar Eventos de Botones e Interacciones
 function setupEventListeners() {
-    // Cierre de Modales
     const closeProductBtn = document.getElementById('close-product-btn');
     if (closeProductBtn) {
         closeProductBtn.addEventListener('click', () => {
@@ -138,7 +128,6 @@ function setupEventListeners() {
         });
     }
 
-    // Carrito Sidebar
     const cartBtn = document.getElementById('cart-btn');
     if (cartBtn) {
         cartBtn.addEventListener('click', () => {
@@ -153,7 +142,6 @@ function setupEventListeners() {
         });
     }
 
-    // Modo Oscuro/Claro
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -161,7 +149,6 @@ function setupEventListeners() {
         });
     }
 
-    // Buscador
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
@@ -171,7 +158,6 @@ function setupEventListeners() {
         });
     }
 
-    // Tallas
     document.querySelectorAll('.size-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
@@ -179,7 +165,6 @@ function setupEventListeners() {
         });
     });
 
-    // Agregar al Carrito
     const addToCartBtn = document.getElementById('add-to-cart-modal-btn');
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', () => {
@@ -192,22 +177,38 @@ function setupEventListeners() {
         });
     }
 
-    // Checkout / Finalizar
+    // Checkout / Finalizar Compra con Modal Personalizado
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
             if (cart.length === 0) {
                 alert('Tu bolsa está vacía.');
             } else {
-                alert('¡Gracias por tu compra en NROSEN Studio! Nos pondremos en contacto para coordinar la entrega.');
                 cart = [];
                 updateCartUI();
+
                 document.getElementById('cart-sidebar').classList.remove('active');
+                document.getElementById('checkout-modal').classList.add('active');
             }
         });
     }
 
-    // Clic fuera del modal para cerrar
+    // Cierre del Modal de Confirmación
+    const closeCheckoutBtn = document.getElementById('close-checkout-modal-btn');
+    const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
+
+    if (closeCheckoutBtn) {
+        closeCheckoutBtn.addEventListener('click', () => {
+            document.getElementById('checkout-modal').classList.remove('active');
+        });
+    }
+
+    if (confirmCheckoutBtn) {
+        confirmCheckoutBtn.addEventListener('click', () => {
+            document.getElementById('checkout-modal').classList.remove('active');
+        });
+    }
+
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
             e.target.classList.remove('active');
@@ -215,7 +216,6 @@ function setupEventListeners() {
     });
 }
 
-// Actualizar Carrito
 function updateCartUI() {
     const countEl = document.getElementById('cart-count');
     if (countEl) countEl.textContent = cart.length;
