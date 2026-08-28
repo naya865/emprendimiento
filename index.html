@@ -9,25 +9,34 @@
 <body>
 
     <!-- Header y Navegación -->
-    <header class="main-header">
-        <div class="promo-bar">
-            Envío gratis en compras superiores a $150.000 | Colección 2026
+   <header>
+    <div class="promo-bar">
+        ENVÍOS GRATIS EN COMPRAS SUPERIORES A $150.000
+    </div>
+    
+    <nav class="nav-container">
+        <!-- 1. Izquierda: Buscador -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Buscar productos...">
         </div>
-        <nav class="nav-container">
-            <div class="logo">
-                <h1>NROSEN <span>studio</span></h1>
-                <p class="tagline">"Porque sentirse bien también se viste"</p>
-            </div>
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar productos...">
-            </div>
-            <div class="nav-actions">
-                <button id="about-btn" class="icon-btn" title="Nuestra Historia">ℹ️</button>
-                <button id="theme-toggle" class="icon-btn" title="Modo Oscuro/Claro">🌙</button>
-                <button id="cart-btn" class="icon-btn" title="Ver Bolsa">🛍️ <span id="cart-count">0</span></button>
-            </div>
-        </nav>
-    </header>
+
+        <!-- 2. Centro: Logo y Slogan -->
+        <div class="logo">
+            <h1>NROSEN <span>studio</span></h1>
+            <p class="tagline">"Porque sentirse bien también se viste"</p>
+        </div>
+
+        <!-- 3. Derecha: Acciones (Nosotros, Modo Oscuro, Carrito) -->
+        <div class="nav-actions">
+            <button class="icon-btn" id="about-btn" title="Acerca de nosotros">ℹ️</button>
+            <button class="icon-btn" id="theme-toggle" title="Cambiar tema">🌙</button>
+            <button class="icon-btn" id="cart-btn" title="Ver carrito">
+                🛒
+                <span id="cart-count">0</span>
+            </button>
+        </div>
+    </nav>
+</header>
 
     <!-- Grilla Principal de Productos -->
     <main class="main-content">
