@@ -1,298 +1,289 @@
+// ==========================================
+// 1. BASE DE DATOS DE PRODUCTOS
+// ==========================================
 const products = [
     {
         id: 1,
-        name: "Suéter de algodón",
-        price: "$45.000",
-        description: "Punto fino, 100% algodón orgánico, suave y transpirable.",
-        mainImage: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500",
-        styles: [
-            { name: "Beige Clásico", img: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500" },
-            { name: "Negro Gráfico", img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500" },
-            { name: "Rayas Náuticas", img: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500" },
-            { name: "Gris Melange", img: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500" }
-        ]
-    },
-    {
-        id: 2,
-        name: "Pijama Seda Luxe",
-        price: "$89.000",
-        description: "Conjunto de dos piezas en seda de tacto ultrasuave para el descanso.",
-        mainImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500",
-        styles: [
-            { name: "Negro Elegante", img: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500" },
-            { name: "Rosa Palo", img: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500" },
-            { name: "Verde Esmeralda", img: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500" }
-        ]
-    },
-    {
-        id: 3,
-        name: "Camiseta Básica Premium",
-        price: "$28.000",
-        description: "Corte clásico con cuello redondo, ideal para combinar a diario.",
-        mainImage: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500",
-        styles: [
-            { name: "Blanco Puro", img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" },
-            { name: "Negro Mate", img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500" }
+        nombre: "Conjunto Satinado Soft",
+        categoria: "lenceria",
+        precio: 85000,
+        descripcion: "Conjunto elaborado en satén suave con detalles de encaje de alta calidad.",
+        // Propiedad principal para la tarjeta del catálogo:
+        imagen: "images/producto1-1.jpeg",
+        // Arreglo completo para la galería del modal:
+        imagenes: [
+            "images/producto1-1.jpeg"
         ]
     }
 ];
 
+// Estado de la aplicación
 let cart = [];
-let selectedProductForCart = null;
-let selectedStyleName = "";
-let whatsappUrl = '';
+let currentCategory = 'todos';
 
-// Número oficial de N'ROSEN Studio
-const whatsappPhone = '573045934907'; 
-
+// ==========================================
+// 2. INICIALIZACIÓN Y EVENTOS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
     setupEventListeners();
 });
 
-function renderProducts(items) {
-    const container = document.getElementById('products-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    items.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
-        card.innerHTML = `
-            <img src="${product.mainImage}" alt="${product.name}">
-            <div class="product-card-info">
-                <h3>${product.name}</h3>
-                <p>${product.price}</p>
-            </div>
-        `;
-        card.addEventListener('click', () => openProductModal(product.id));
-        container.appendChild(card);
-    });
-}
-
-function openProductModal(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    selectedProductForCart = product;
-
-    document.getElementById('modal-main-img').src = product.mainImage;
-    document.getElementById('modal-title').textContent = product.name;
-    document.getElementById('modal-price').textContent = product.price;
-    document.getElementById('modal-desc').textContent = product.description;
-
-    // Resetear selección de talla a la primera opción por defecto
-    const sizeBtns = document.querySelectorAll('.size-btn');
-    sizeBtns.forEach(b => b.classList.remove('active'));
-    if (sizeBtns.length > 0) sizeBtns[0].classList.add('active');
-
-    const stylesSection = document.getElementById('modal-styles-section');
-    const stylesList = document.getElementById('modal-styles-list');
-    stylesList.innerHTML = '';
-
-    if (product.styles && product.styles.length > 0) {
-        stylesSection.style.display = 'block';
-        selectedStyleName = product.styles[0].name; // Estilo por defecto
-
-        product.styles.forEach((style, index) => {
-            const styleCard = document.createElement('div');
-            styleCard.className = `style-card ${index === 0 ? 'active' : ''}`;
-            styleCard.innerHTML = `
-                <img src="${style.img}" alt="${style.name}">
-                <span>${style.name}</span>
-            `;
-
-            styleCard.addEventListener('click', () => {
-                document.getElementById('modal-main-img').src = style.img;
-                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
-                styleCard.classList.add('active');
-                selectedStyleName = style.name;
-            });
-
-            stylesList.appendChild(styleCard);
-        });
-    } else {
-        stylesSection.style.display = 'none';
-        selectedStyleName = "";
-    }
-
-    document.getElementById('product-modal').classList.add('active');
-}
-
 function setupEventListeners() {
-    const closeProductBtn = document.getElementById('close-product-btn');
-    if (closeProductBtn) {
-        closeProductBtn.addEventListener('click', () => {
-            document.getElementById('product-modal').classList.remove('active');
+    // Filtros por categoría
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            categoryBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCategory = e.target.dataset.category;
+            filterProducts();
         });
+    });
+
+    // Búsqueda
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', filterProducts);
     }
 
-    const closeAboutBtn = document.getElementById('close-about-btn');
-    if (closeAboutBtn) {
-        closeAboutBtn.addEventListener('click', () => {
-            document.getElementById('about-modal').classList.remove('active');
-        });
-    }
-
+    // Modal Nosotras
     const aboutBtn = document.getElementById('about-btn');
-    if (aboutBtn) {
-        aboutBtn.addEventListener('click', () => {
-            document.getElementById('about-modal').classList.add('active');
-        });
+    const aboutModal = document.getElementById('about-modal');
+    const closeAboutBtn = document.getElementById('close-about-btn');
+
+    if (aboutBtn && aboutModal) {
+        aboutBtn.addEventListener('click', () => aboutModal.classList.add('active'));
+    }
+    if (closeAboutBtn && aboutModal) {
+        closeAboutBtn.addEventListener('click', () => aboutModal.classList.remove('active'));
     }
 
+    // Modal Detalle de Producto
+    const closeProductBtn = document.getElementById('close-product-btn');
+    const productModal = document.getElementById('product-modal');
+    if (closeProductBtn && productModal) {
+        closeProductBtn.addEventListener('click', () => productModal.classList.remove('active'));
+    }
+
+    // Carrito / Bolsa de compras
     const cartBtn = document.getElementById('cart-btn');
-    if (cartBtn) {
-        cartBtn.addEventListener('click', () => {
-            document.getElementById('cart-sidebar').classList.add('active');
-        });
-    }
-
+    const cartSidebar = document.getElementById('cart-sidebar');
     const closeCartBtn = document.getElementById('close-cart-btn');
-    if (closeCartBtn) {
-        closeCartBtn.addEventListener('click', () => {
-            document.getElementById('cart-sidebar').classList.remove('active');
+
+    if (cartBtn && cartSidebar) {
+        cartBtn.addEventListener('click', () => cartSidebar.classList.add('active'));
+    }
+    if (closeCartBtn && cartSidebar) {
+        closeCartBtn.addEventListener('click', () => cartSidebar.classList.remove('active'));
+    }
+
+    // Checkout / WhatsApp
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const checkoutModal = document.getElementById('checkout-modal');
+    const closeCheckoutModalBtn = document.getElementById('close-checkout-modal-btn');
+    const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
+
+    if (checkoutBtn && checkoutModal) {
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert("Tu bolsa de compras está vacía.");
+                return;
+            }
+            checkoutModal.classList.add('active');
         });
     }
 
+    if (closeCheckoutModalBtn && checkoutModal) {
+        closeCheckoutModalBtn.addEventListener('click', () => checkoutModal.classList.remove('active'));
+    }
+
+    if (confirmCheckoutBtn) {
+        confirmCheckoutBtn.addEventListener('click', processWhatsAppOrder);
+    }
+
+    // Cambio de tema (Oscuro / Claro)
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
         });
     }
+}
 
+// ==========================================
+// 3. RENDERIZADO DE PRODUCTOS Y FILTROS
+// ==========================================
+function renderProducts(items) {
+    const container = document.getElementById('products-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (items.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center;">No se encontraron productos.</p>`;
+        return;
+    }
+
+    items.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${product.imagen}" alt="${product.nombre}">
+            <div class="product-card-info">
+                <h3>${product.nombre}</h3>
+                <p>$${product.precio.toLocaleString()}</p>
+            </div>
+        `;
+        card.addEventListener('click', () => openProductModal(product));
+        container.appendChild(card);
+    });
+}
+
+function filterProducts() {
     const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
-            renderProducts(filtered);
-        });
-    }
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
-    document.querySelectorAll('.size-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-        });
+    const filtered = products.filter(product => {
+        const matchesCategory = currentCategory === 'todos' || product.categoria === currentCategory;
+        const matchesSearch = product.nombre.toLowerCase().includes(searchTerm) || 
+                              product.descripcion.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
     });
 
-    const addToCartBtn = document.getElementById('add-to-cart-modal-btn');
-    if (addToCartBtn) {
-        addToCartBtn.addEventListener('click', () => {
-            if (selectedProductForCart) {
-                // Obtener la talla seleccionada
-                const activeSizeBtn = document.querySelector('.size-btn.active');
-                const selectedSize = activeSizeBtn ? activeSizeBtn.textContent.trim() : 'S';
+    renderProducts(filtered);
+}
 
-                // Guardar el item con talla e información del estilo
-                cart.push({
-                    name: selectedProductForCart.name,
-                    price: selectedProductForCart.price,
-                    size: selectedSize,
-                    style: selectedStyleName
-                });
+// ==========================================
+// 4. DETALLE DE PRODUCTO Y GALERÍA
+// ==========================================
+function openProductModal(product) {
+    const modal = document.getElementById('product-modal');
+    const mainImg = document.getElementById('modal-main-img');
+    const title = document.getElementById('modal-title');
+    const price = document.getElementById('modal-price');
+    const desc = document.getElementById('modal-desc');
+    const galleryContainer = document.querySelector('.product-gallery');
+    const addBtn = document.getElementById('add-to-cart-modal-btn');
 
-                updateCartUI();
-                document.getElementById('product-modal').classList.remove('active');
-                document.getElementById('cart-sidebar').classList.add('active');
-            }
+    if (!modal) return;
+
+    title.textContent = product.nombre;
+    price.textContent = `$${product.precio.toLocaleString()}`;
+    desc.textContent = product.descripcion;
+    
+    // Asignar imagen principal
+    const imagesList = product.imagenes && product.imagenes.length > 0 ? product.imagenes : [product.imagen];
+    mainImg.src = imagesList[0];
+
+    // Construir miniaturas si hay más de una foto
+    let thumbnailsDiv = document.getElementById('modal-thumbnails');
+    if (!thumbnailsDiv) {
+        thumbnailsDiv = document.createElement('div');
+        thumbnailsDiv.id = 'modal-thumbnails';
+        thumbnailsDiv.className = 'modal-thumbnails';
+        galleryContainer.appendChild(thumbnailsDiv);
+    }
+    thumbnailsDiv.innerHTML = '';
+
+    if (imagesList.length > 1) {
+        imagesList.forEach((imgUrl, idx) => {
+            const thumb = document.createElement('img');
+            thumb.src = imgUrl;
+            thumb.className = idx === 0 ? 'thumb-img active' : 'thumb-img';
+            thumb.onclick = () => {
+                mainImg.src = imgUrl;
+                document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            };
+            thumbnailsDiv.appendChild(thumb);
         });
     }
 
-    // Checkout / Construir mensaje para WhatsApp
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-            if (cart.length === 0) {
-                alert('Tu bolsa está vacía.');
-                return;
-            }
+    // Configurar botón añadir a la bolsa
+    addBtn.onclick = () => {
+        addToCart(product);
+        modal.classList.remove('active');
+    };
 
-            // Formatear cada producto incluyendo la Talla y Estilo
-            let itemSummary = cart.map(item => {
-                let detail = `• *${item.name}* - ${item.price}\n   Talla: ${item.size}`;
-                if (item.style) {
-                    detail += ` | Color/Estilo: ${item.style}`;
-                }
-                return detail;
-            }).join('\n\n');
+    modal.classList.add('active');
+}
 
-            const totalEl = document.getElementById('cart-total-price');
-            const total = totalEl ? totalEl.textContent : '$0';
-            const methodSelect = document.getElementById('payment-method');
-            const methodText = methodSelect ? methodSelect.options[methodSelect.selectedIndex].text : 'Transferencia';
+// ==========================================
+// 5. GESTIÓN DEL CARRITO Y WHATSAPP
+// ==========================================
+function addToCart(product) {
+    const activeSizeBtn = document.querySelector('.size-btn.active');
+    const size = activeSizeBtn ? activeSizeBtn.textContent : 'S';
 
-            const message = `¡Hola *NROSEN Studio*! ✨\nQuiero realizar el siguiente pedido:\n\n${itemSummary}\n\n*Total:* ${total}\n*Método de pago:* ${methodText}\n\nQuedo a la espera para coordinar el pago y envío.`;
+    const existingIndex = cart.findIndex(item => item.id === product.id && item.size === size);
 
-            whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
-
-            cart = [];
-            updateCartUI();
-
-            document.getElementById('cart-sidebar').classList.remove('active');
-            document.getElementById('checkout-modal').classList.add('active');
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            nombre: product.nombre,
+            precio: product.precio,
+            imagen: product.imagen,
+            size: size,
+            quantity: 1
         });
     }
 
-    const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
-    if (confirmCheckoutBtn) {
-        confirmCheckoutBtn.addEventListener('click', () => {
-            document.getElementById('checkout-modal').classList.remove('active');
-            if (whatsappUrl) {
-                window.open(whatsappUrl, '_blank');
-            }
-        });
-    }
-
-    const closeCheckoutBtn = document.getElementById('close-checkout-modal-btn');
-    if (closeCheckoutBtn) {
-        closeCheckoutBtn.addEventListener('click', () => {
-            document.getElementById('checkout-modal').classList.remove('active');
-        });
-    }
-
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.classList.remove('active');
-        }
-    });
+    updateCartUI();
 }
 
 function updateCartUI() {
-    const countEl = document.getElementById('cart-count');
-    if (countEl) countEl.textContent = cart.length;
+    const cartCount = document.getElementById('cart-count');
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const cartTotalPrice = document.getElementById('cart-total-price');
 
-    const container = document.getElementById('cart-items-container');
-    if (!container) return;
-    container.innerHTML = '';
+    const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const totalPrice = cart.reduce((acc, item) => acc + (item.precio * item.quantity), 0);
 
-    let total = 0;
-    cart.forEach((item, index) => {
-        const numericPrice = parseInt(item.price.replace(/[^0-9]/g, '')) || 0;
-        total += numericPrice;
+    if (cartCount) cartCount.textContent = totalQty;
+    if (cartTotalPrice) cartTotalPrice.textContent = `$${totalPrice.toLocaleString()}`;
 
-        const div = document.createElement('div');
-        div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border-color);';
-        div.innerHTML = `
-            <div>
-                <strong>${item.name}</strong>
-                <div style="font-size:0.8rem; color:var(--text-color); opacity:0.8;">
-                    Talla: ${item.size}${item.style ? ' | ' + item.style : ''}
+    if (cartItemsContainer) {
+        cartItemsContainer.innerHTML = '';
+        cart.forEach((item, index) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.style.cssText = 'display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:10px;';
+            itemDiv.innerHTML = `
+                <img src="${item.imagen}" style="width:45px; height:45px; object-fit:cover; border-radius:4px;">
+                <div style="flex:1;">
+                    <p style="font-size:0.85rem; font-weight:600;">${item.nombre}</p>
+                    <p style="font-size:0.75rem; color:var(--rosa-viejo);">Talla: ${item.size} | Cant: ${item.quantity}</p>
+                    <p style="font-size:0.8rem;">$${(item.precio * item.quantity).toLocaleString()}</p>
                 </div>
-                <div style="font-size:0.85rem; color:var(--accent-color); font-weight:600;">${item.price}</div>
-            </div>
-            <button onclick="removeItem(${index})" style="background:none; border:none; color:#c49a9a; font-weight:bold; cursor:pointer;">✕</button>
-        `;
-        container.appendChild(div);
-    });
-
-    const totalEl = document.getElementById('cart-total-price');
-    if (totalEl) totalEl.textContent = `$${total.toLocaleString('es-CO')}`;
+                <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#b57a7a; cursor:pointer;">&times;</button>
+            `;
+            cartItemsContainer.appendChild(itemDiv);
+        });
+    }
 }
 
-function removeItem(index) {
+function removeFromCart(index) {
     cart.splice(index, 1);
     updateCartUI();
+}
+
+function processWhatsAppOrder() {
+    const paymentMethod = document.getElementById('payment-method').value;
+    const phone = "573045934907";
+
+    let message = "¡Hola *N'ROSEN Studio*! 🌸 Deseo realizar el siguiente pedido:\n\n";
+    
+    cart.forEach(item => {
+        message += `• *${item.nombre}* (Talla: ${item.size}) x${item.quantity} - $${(item.precio * item.quantity).toLocaleString()}\n`;
+    });
+
+    const total = cart.reduce((acc, item) => acc + (item.precio * item.quantity), 0);
+    message += `\n*Total a pagar:* $${total.toLocaleString()}`;
+    message += `\n*Método de pago:* ${paymentMethod.toUpperCase()}`;
+    message += `\n\nQuedo atenta para confirmar datos de envío.`;
+
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
 }
