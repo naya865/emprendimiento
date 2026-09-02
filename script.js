@@ -8,33 +8,25 @@ const products = [
         categoria: "lenceria",
         precio: 85000,
         descripcion: "Conjunto elaborado en satén suave con detalles de encaje de alta calidad.",
-        // Propiedad principal para la tarjeta del catálogo:
         imagen: "images/producto1-1.jpeg",
-        // Arreglo completo para la galería del modal:
         imagenes: [
             "images/producto1-1.jpeg"
         ]
-    
     },
-
     {
         id: 2,
-        nombre: "Conjunto Satinado Soft",
+        nombre: "Enterizo Satinado Soft",
         categoria: "enterisos",
         precio: 35000,
-        descripcion: "Conjunto elaborado en satén suave con detalles de encaje de alta calidad.",
-        // Propiedad principal para la tarjeta del catálogo:
+        descripcion: "Enterizo cómodo y suave elaborado en satén de alta calidad.",
         imagen: "images/producto2-1.jpeg",
-        // Arreglo completo para la galería del modal:
         imagenes: [
             "images/producto2-1.jpeg",
             "images/producto2-2.jpeg",
             "images/producto2-3.jpeg"
         ]
-    },
-
+    }
 ];
-
 
 // Estado de la aplicación
 let cart = [];
@@ -57,6 +49,15 @@ function setupEventListeners() {
             e.target.classList.add('active');
             currentCategory = e.target.dataset.category;
             filterProducts();
+        });
+    });
+
+    // Selección interactiva de Tallas (S, M, L, XL)
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            sizeBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
         });
     });
 
@@ -191,11 +192,18 @@ function openProductModal(product) {
     price.textContent = `$${product.precio.toLocaleString()}`;
     desc.textContent = product.descripcion;
     
+    // Restablecer selección por defecto en la talla 'S'
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    sizeBtns.forEach((btn, index) => {
+        if (index === 0) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+
     // Asignar imagen principal
     const imagesList = product.imagenes && product.imagenes.length > 0 ? product.imagenes : [product.imagen];
     mainImg.src = imagesList[0];
 
-    // Construir miniaturas si hay más de una foto
+    // Construir miniaturas si hay múltiples fotos
     let thumbnailsDiv = document.getElementById('modal-thumbnails');
     if (!thumbnailsDiv) {
         thumbnailsDiv = document.createElement('div');
@@ -289,7 +297,8 @@ function removeFromCart(index) {
 }
 
 function processWhatsAppOrder() {
-    const paymentMethod = document.getElementById('payment-method').value;
+    const paymentMethodSelect = document.getElementById('payment-method');
+    const paymentMethod = paymentMethodSelect ? paymentMethodSelect.value : 'nequi';
     const phone = "573045934907";
 
     let message = "¡Hola *N'ROSEN Studio*! 🌸 Deseo realizar el siguiente pedido:\n\n";
