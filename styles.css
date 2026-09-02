@@ -1,11 +1,11 @@
 :root {
     --bg-color: #f9f6f0;           /* Beige suave */
-    --card-bg: #ffffff;           /* Blanco puro */
+    --card-bg: #ffffff;           /* Blanco */
     --text-color: #4a3e3d;         /* Oscuro cálido */
     --rosa-palo: #f4ece8;          /* Rosa Palo */
     --rosa-viejo: #b57a7a;         /* Rosa Viejo */
-    --dorado-rosado: #c88a8a;      /* Dorado Rosado / Acabado metálico mate */
-    --border-color: #eae0d8;       /* Borde beige/rosado */
+    --dorado-rosado: #c88a8a;      /* Dorado Rosado */
+    --border-color: #eae0d8;       /* Borde suave */
     --primary-btn: #b57a7a;        /* Rosa Viejo */
     --primary-btn-text: #ffffff;
 }
@@ -26,7 +26,7 @@ body.dark-theme {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Montserrat', sans-serif; /* Sans serif para textos generales */
+    font-family: 'Montserrat', sans-serif;
 }
 
 body {
@@ -60,7 +60,6 @@ body {
     line-height: 1.1;
 }
 
-/* Tipografía Serif Elegante para el nombre */
 .logo-main {
     font-family: 'Playfair Display', serif;
     font-size: 2.3rem;
@@ -78,7 +77,6 @@ body {
     margin-top: 2px;
 }
 
-/* Tipografía Manuscrita para el eslogan */
 .logo-tagline {
     font-family: 'Great Vibes', cursive;
     font-size: 1.3rem;
@@ -93,7 +91,42 @@ body {
     gap: 15px;
 }
 
-.nav-link-btn, .icon-btn {
+/* BOTÓN NOSOTRAS DESTACADO */
+.highlight-about-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background-color: var(--rosa-palo);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 6px rgba(181, 122, 122, 0.08);
+}
+
+.highlight-about-btn .btn-icon {
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.highlight-about-btn:hover {
+    background-color: var(--rosa-viejo);
+    color: #ffffff;
+    border-color: var(--rosa-viejo);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(181, 122, 122, 0.25);
+}
+
+.highlight-about-btn:hover .btn-icon {
+    transform: rotate(15deg) scale(1.15);
+}
+
+.icon-btn {
     background: none;
     border: none;
     color: var(--text-color);

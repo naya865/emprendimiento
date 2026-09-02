@@ -10,11 +10,16 @@
 </head>
 <body>
 
+    <!-- ENCABEZADO Y NAVEGACIÓN -->
     <header class="navbar">
         <div class="nav-left">
-            <button id="about-btn" class="nav-link-btn">NOSOTRAS</button>
+            <button id="about-btn" class="nav-link-btn highlight-about-btn">
+                <span>NOSOTRAS</span>
+                <span class="btn-icon">✨</span>
+            </button>
         </div>
 
+        <!-- BLOQUE CENTRAL CON LOGO Y ESLOGAN INTEGRADO -->
         <div class="logo-container">
             <h1 class="brand-logo">
                 <span class="logo-main">N'ROSEN</span>
@@ -34,6 +39,7 @@
         </div>
     </header>
 
+    <!-- BARRA DE CATEGORÍAS -->
     <nav class="categories-bar">
         <button class="category-btn active" data-category="todos">Todas</button>
         <button class="category-btn" data-category="lenceria">Lencería</button>
@@ -43,10 +49,13 @@
         <button class="category-btn" data-category="accesorios">Accesorios</button>
     </nav>
 
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
         <section class="catalog-section">
             <h2 class="section-title">COLECCIÓN DESTACADA</h2>
-            <div id="products-container" class="products-grid"></div>
+            <div id="products-container" class="products-grid">
+                <!-- Productos dinámicos -->
+            </div>
         </section>
     </main>
 
