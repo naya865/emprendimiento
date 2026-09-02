@@ -14,8 +14,27 @@ const products = [
         imagenes: [
             "images/producto1-1.jpeg"
         ]
-    }
+    
+    },
+
+    {
+        id: 2,
+        nombre: "Conjunto Satinado Soft",
+        categoria: "enterisos",
+        precio: 35000,
+        descripcion: "Conjunto elaborado en satén suave con detalles de encaje de alta calidad.",
+        // Propiedad principal para la tarjeta del catálogo:
+        imagen: "images/producto2-1.jpeg",
+        // Arreglo completo para la galería del modal:
+        imagenes: [
+            "images/producto2-1.jpeg",
+            "images/producto2-2.jpeg",
+            "images/producto2-3.jpeg"
+        ]
+    },
+
 ];
+
 
 // Estado de la aplicación
 let cart = [];
