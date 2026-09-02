@@ -1,4 +1,4 @@
-const products = [
+const onst products = [
     {
         id: 1,
         name: "Suéter de algodón",
@@ -39,6 +39,10 @@ const products = [
 
 let cart = [];
 let selectedProductForCart = null;
+let whatsappUrl = '';
+
+// Número oficial de N'ROSEN Studio
+const whatsappPhone = '573045934907'; 
 
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
@@ -177,34 +181,50 @@ function setupEventListeners() {
         });
     }
 
-    // Checkout / Finalizar Compra con Modal Personalizado
+    // Checkout / Construir enlace de WhatsApp
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
             if (cart.length === 0) {
                 alert('Tu bolsa está vacía.');
-            } else {
-                cart = [];
-                updateCartUI();
+                return;
+            }
 
-                document.getElementById('cart-sidebar').classList.remove('active');
-                document.getElementById('checkout-modal').classList.add('active');
+            // 1. Formatear resumen del pedido
+            let itemSummary = cart.map(item => `• ${item.name} (${item.price})`).join('\n');
+            const totalEl = document.getElementById('cart-total-price');
+            const total = totalEl ? totalEl.textContent : '$0';
+            const methodSelect = document.getElementById('payment-method');
+            const methodText = methodSelect ? methodSelect.options[methodSelect.selectedIndex].text : 'Transferencia';
+
+            const message = `¡Hola *NROSEN Studio*! ✨\nQuiero realizar la siguiente compra:\n\n${itemSummary}\n\n*Total:* ${total}\n*Método de pago:* ${methodText}\n\nQuedo a la espera para coordinar el pago y envío.`;
+
+            whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
+
+            // 2. Limpiar bolsa y actualizar vista
+            cart = [];
+            updateCartUI();
+
+            // 3. Mostrar modal de confirmación
+            document.getElementById('cart-sidebar').classList.remove('active');
+            document.getElementById('checkout-modal').classList.add('active');
+        });
+    }
+
+    // Confirmar en el modal y abrir chat de WhatsApp
+    const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
+    if (confirmCheckoutBtn) {
+        confirmCheckoutBtn.addEventListener('click', () => {
+            document.getElementById('checkout-modal').classList.remove('active');
+            if (whatsappUrl) {
+                window.open(whatsappUrl, '_blank');
             }
         });
     }
 
-    // Cierre del Modal de Confirmación
     const closeCheckoutBtn = document.getElementById('close-checkout-modal-btn');
-    const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
-
     if (closeCheckoutBtn) {
         closeCheckoutBtn.addEventListener('click', () => {
-            document.getElementById('checkout-modal').classList.remove('active');
-        });
-    }
-
-    if (confirmCheckoutBtn) {
-        confirmCheckoutBtn.addEventListener('click', () => {
             document.getElementById('checkout-modal').classList.remove('active');
         });
     }
