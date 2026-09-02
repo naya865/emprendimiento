@@ -356,7 +356,7 @@ body.dark-theme .promo-bar {
 }
 
 .styles-grid {
-    display: grid;
+    display grid: ;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 12px;
 }
@@ -455,7 +455,7 @@ body.dark-theme .promo-bar {
 }
 
 .checkout-success-card .btn-primary {
-    max-width: 180px;
+    max-width: 220px;
     margin: 0 auto;
 }
 
