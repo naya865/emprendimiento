@@ -1,4 +1,4 @@
-const onst products = [
+const products = [
     {
         id: 1,
         name: "Suéter de algodón",
@@ -39,6 +39,7 @@ const onst products = [
 
 let cart = [];
 let selectedProductForCart = null;
+let selectedStyleName = "";
 let whatsappUrl = '';
 
 // Número oficial de N'ROSEN Studio
@@ -80,12 +81,18 @@ function openProductModal(productId) {
     document.getElementById('modal-price').textContent = product.price;
     document.getElementById('modal-desc').textContent = product.description;
 
+    // Resetear selección de talla a la primera opción por defecto
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    sizeBtns.forEach(b => b.classList.remove('active'));
+    if (sizeBtns.length > 0) sizeBtns[0].classList.add('active');
+
     const stylesSection = document.getElementById('modal-styles-section');
     const stylesList = document.getElementById('modal-styles-list');
     stylesList.innerHTML = '';
 
     if (product.styles && product.styles.length > 0) {
         stylesSection.style.display = 'block';
+        selectedStyleName = product.styles[0].name; // Estilo por defecto
 
         product.styles.forEach((style, index) => {
             const styleCard = document.createElement('div');
@@ -99,12 +106,14 @@ function openProductModal(productId) {
                 document.getElementById('modal-main-img').src = style.img;
                 document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
                 styleCard.classList.add('active');
+                selectedStyleName = style.name;
             });
 
             stylesList.appendChild(styleCard);
         });
     } else {
         stylesSection.style.display = 'none';
+        selectedStyleName = "";
     }
 
     document.getElementById('product-modal').classList.add('active');
@@ -173,7 +182,18 @@ function setupEventListeners() {
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', () => {
             if (selectedProductForCart) {
-                cart.push(selectedProductForCart);
+                // Obtener la talla seleccionada
+                const activeSizeBtn = document.querySelector('.size-btn.active');
+                const selectedSize = activeSizeBtn ? activeSizeBtn.textContent.trim() : 'S';
+
+                // Guardar el item con talla e información del estilo
+                cart.push({
+                    name: selectedProductForCart.name,
+                    price: selectedProductForCart.price,
+                    size: selectedSize,
+                    style: selectedStyleName
+                });
+
                 updateCartUI();
                 document.getElementById('product-modal').classList.remove('active');
                 document.getElementById('cart-sidebar').classList.add('active');
@@ -181,7 +201,7 @@ function setupEventListeners() {
         });
     }
 
-    // Checkout / Construir enlace de WhatsApp
+    // Checkout / Construir mensaje para WhatsApp
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
@@ -190,28 +210,32 @@ function setupEventListeners() {
                 return;
             }
 
-            // 1. Formatear resumen del pedido
-            let itemSummary = cart.map(item => `• ${item.name} (${item.price})`).join('\n');
+            // Formatear cada producto incluyendo la Talla y Estilo
+            let itemSummary = cart.map(item => {
+                let detail = `• *${item.name}* - ${item.price}\n   Talla: ${item.size}`;
+                if (item.style) {
+                    detail += ` | Color/Estilo: ${item.style}`;
+                }
+                return detail;
+            }).join('\n\n');
+
             const totalEl = document.getElementById('cart-total-price');
             const total = totalEl ? totalEl.textContent : '$0';
             const methodSelect = document.getElementById('payment-method');
             const methodText = methodSelect ? methodSelect.options[methodSelect.selectedIndex].text : 'Transferencia';
 
-            const message = `¡Hola *NROSEN Studio*! ✨\nQuiero realizar la siguiente compra:\n\n${itemSummary}\n\n*Total:* ${total}\n*Método de pago:* ${methodText}\n\nQuedo a la espera para coordinar el pago y envío.`;
+            const message = `¡Hola *NROSEN Studio*! ✨\nQuiero realizar el siguiente pedido:\n\n${itemSummary}\n\n*Total:* ${total}\n*Método de pago:* ${methodText}\n\nQuedo a la espera para coordinar el pago y envío.`;
 
             whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`;
 
-            // 2. Limpiar bolsa y actualizar vista
             cart = [];
             updateCartUI();
 
-            // 3. Mostrar modal de confirmación
             document.getElementById('cart-sidebar').classList.remove('active');
             document.getElementById('checkout-modal').classList.add('active');
         });
     }
 
-    // Confirmar en el modal y abrir chat de WhatsApp
     const confirmCheckoutBtn = document.getElementById('confirm-checkout-btn');
     if (confirmCheckoutBtn) {
         confirmCheckoutBtn.addEventListener('click', () => {
@@ -254,7 +278,10 @@ function updateCartUI() {
         div.innerHTML = `
             <div>
                 <strong>${item.name}</strong>
-                <div style="font-size:0.85rem; color:var(--accent-color);">${item.price}</div>
+                <div style="font-size:0.8rem; color:var(--text-color); opacity:0.8;">
+                    Talla: ${item.size}${item.style ? ' | ' + item.style : ''}
+                </div>
+                <div style="font-size:0.85rem; color:var(--accent-color); font-weight:600;">${item.price}</div>
             </div>
             <button onclick="removeItem(${index})" style="background:none; border:none; color:#c49a9a; font-weight:bold; cursor:pointer;">✕</button>
         `;
