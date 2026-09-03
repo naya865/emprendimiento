@@ -22,17 +22,19 @@ body.dark-theme {
     --primary-btn-text: #1e1919;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Montserrat', sans-serif;
 }
 
-body {
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     background-color: var(--bg-color);
     color: var(--text-color);
-    overflow-x: hidden;
+    font-family: 'Montserrat', sans-serif;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -40,17 +42,18 @@ body {
    1. ENCABEZADO Y NAVEGACIÓN
    ========================================== */
 .navbar {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 4%;
+    padding: 12px 14px;
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
-    gap: 10px;
+    gap: 8px;
 }
 
-/* En celular el logo va centrado arriba */
+/* En celular el logo va centrado en la fila superior */
 .logo-container {
     text-align: center;
     width: 100%;
@@ -66,29 +69,29 @@ body {
 
 .logo-main {
     font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 600;
     letter-spacing: 2px;
 }
 
 .logo-sub {
-    font-size: 0.65rem;
-    letter-spacing: 4px;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
     color: var(--rosa-viejo);
     margin-top: 2px;
 }
 
 .logo-tagline {
     font-family: 'Great Vibes', cursive;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--dorado-rosado);
-    margin-top: 3px;
+    margin-top: 2px;
 }
 
 .nav-left, .nav-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     order: 2;
 }
 
@@ -96,7 +99,7 @@ body {
     margin-left: auto;
 }
 
-/* En pantallas grandes (PC/Tablets), el logo se ubica al centro */
+/* En PC/Tablets el logo vuelve al centro */
 @media (min-width: 768px) {
     .navbar {
         padding: 15px 5%;
@@ -122,7 +125,6 @@ body {
     }
 }
 
-/* BOTONES Y BUSCADOR */
 .highlight-about-btn {
     display: inline-flex;
     align-items: center;
@@ -132,26 +134,26 @@ body {
     color: var(--text-color);
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
 }
 
 .search-box input {
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: 1px solid var(--border-color);
     border-radius: 20px;
     background: var(--rosa-palo);
     color: var(--text-color);
-    width: 110px;
-    font-size: 0.75rem;
+    width: 105px;
+    font-size: 0.72rem;
     outline: none;
 }
 
 @media (min-width: 480px) {
     .search-box input {
-        width: 160px;
+        width: 150px;
     }
 }
 
@@ -160,7 +162,7 @@ body {
     border: none;
     color: var(--text-color);
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
     position: relative;
     padding: 4px;
 }
@@ -168,7 +170,7 @@ body {
 #cart-count {
     background-color: var(--rosa-viejo);
     color: #fff;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     padding: 2px 5px;
     border-radius: 50%;
     position: absolute;
@@ -177,14 +179,15 @@ body {
 }
 
 /* ==========================================
-   2. BARRA DE CATEGORÍAS (SLIDER EN MÓVIL)
+   2. CATEGORÍAS (DESLIZABLE EN MÓVIL)
    ========================================== */
 .categories-bar {
+    width: 100%;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 8px;
-    padding: 12px 4%;
+    padding: 10px 14px;
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
     overflow-x: auto;
@@ -207,12 +210,11 @@ body {
     background: var(--rosa-palo);
     border: 1px solid var(--border-color);
     color: var(--text-color);
-    padding: 6px 16px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.2s ease;
 }
 
 .category-btn.active {
@@ -222,78 +224,67 @@ body {
 }
 
 /* ==========================================
-   3. CATÁLOGO Y TARJETAS DE PRODUCTOS
+   3. CATÁLOGO DE PRODUCTOS (GRID UNIFORME)
    ========================================== */
 .main-content {
-    padding: 20px 4%;
+    width: 100%;
     max-width: 1100px;
+    padding: 18px 12px;
     margin: 0 auto;
 }
 
 .section-title {
     text-align: center;
     font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     letter-spacing: 2px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     color: var(--rosa-viejo);
     text-transform: uppercase;
 }
 
-/* En móvil muestra 2 tarjetas por fila de forma estética */
 .products-grid {
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 10px;
 }
 
 @media (min-width: 768px) {
     .products-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-    }
-}
-
-@media (min-width: 1024px) {
-    .products-grid {
-        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
     }
 }
 
 .product-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.product-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .product-card img {
     width: 100%;
-    height: 220px;
+    height: 190px;
     object-fit: cover;
     display: block;
 }
 
 @media (min-width: 768px) {
     .product-card img {
-        height: 320px;
+        height: 300px;
     }
 }
 
 .product-card-info {
-    padding: 10px;
+    padding: 8px 6px;
     text-align: center;
 }
 
 .product-card-info h3 {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 500;
     margin-bottom: 4px;
 }
@@ -301,135 +292,5 @@ body {
 .product-card-info p {
     color: var(--rosa-viejo);
     font-weight: 600;
-    font-size: 0.9rem;
-}
-
-/* ==========================================
-   4. MODALES, GALERÍA Y SELECCIÓN DE TALLAS
-   ========================================== */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-}
-
-.modal.active {
-    display: flex;
-}
-
-.modal-content {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 450px;
-    position: relative;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.close-btn {
-    position: absolute;
-    top: 12px; right: 12px;
-    background: none; border: none;
-    font-size: 1.5rem; color: var(--text-color);
-    cursor: pointer;
-}
-
-.product-gallery {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.product-gallery img#modal-main-img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.modal-thumbnails {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    width: 100%;
-    padding-bottom: 5px;
-}
-
-.thumb-img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    opacity: 0.7;
-    transition: all 0.2s;
-}
-
-.thumb-img.active {
-    border-color: var(--rosa-viejo);
-    opacity: 1;
-}
-
-.size-options {
-    display: flex;
-    gap: 8px;
-    margin: 10px 0;
-}
-
-.size-btn {
-    border: 1px solid var(--border-color);
-    background: var(--rosa-palo);
-    color: var(--text-color);
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.size-btn.active {
-    background: var(--rosa-viejo);
-    color: #fff;
-    border-color: var(--rosa-viejo);
-}
-
-.primary-btn {
-    background: var(--primary-btn);
-    color: var(--primary-btn-text);
-    border: none;
-    padding: 12px;
-    border-radius: 25px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-top: 15px;
-}
-
-/* ==========================================
-   5. CARRITO Y SIDEBAR
-   ========================================== */
-.cart-sidebar {
-    position: fixed;
-    top: 0; right: -100%;
-    width: 85%; max-width: 360px; height: 100%;
-    background: var(--card-bg);
-    z-index: 1001;
-    transition: right 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-}
-
-.cart-sidebar.active {
-    right: 0;
+    font-size: 0.85rem;
 }
