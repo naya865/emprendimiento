@@ -7,7 +7,7 @@ const productos = [
         categoria: "lenceria",
         descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
         tallas: ["S", "M", "L", "XL"],
-        imagen: "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?auto=format&fit=crop&w=600&q=80",
+        imagen: "images/producto1-1.jpeg",
         imagenes: [
             "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?auto=format&fit=crop&w=600&q=80",
             "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
@@ -20,9 +20,10 @@ const productos = [
         categoria: "enterizos",
         descripcion: "Enterizo ligero y suave ideal para descansar en casa con total comodidad.",
         tallas: ["S", "M", "L", "XL"],
-        imagen: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80",
+        imagen: "images/producto2-1.jpeg",
         imagenes: [
-            "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80"
+            "images/producto2-2.jpeg",
+            "images/producto2-3.jpeg"
         ]
     }
 ];
