@@ -1,33 +1,5 @@
-// PRODUCTOS
-const productos = [
-    {
-        id: 1,
-        nombre: "Conjunto Satinado Soft",
-        precio: 85000,
-        categoria: "lenceria",
-        descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
-        tallas: ["S", "M", "L", "XL"],
-        imagen: "images/producto1-1.jpeg",
-        imagenes: [
-            "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?auto=format&fit=crop&w=600&q=80",
-            "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
-        ]
-    },
-    {
-        id: 2,
-        nombre: "Enterizo Satinado Soft",
-        precio: 35000,
-        categoria: "enterizos",
-        descripcion: "Enterizo ligero y suave ideal para descansar en casa con total comodidad.",
-        tallas: ["S", "M", "L", "XL"],
-        imagen: "images/producto2-1.jpeg",
-        imagenes: [
-            "images/producto2-2.jpeg",
-            "images/producto2-3.jpeg"
-        ]
-    }
-];
-
+// VARIABLES GLOBALES (Es crucial declararlas aquí para que los botones y la búsqueda las detecten)
+let catalogoProductos = [];
 let carrito = JSON.parse(localStorage.getItem("cart_nrosen")) || [];
 let productoSeleccionado = null;
 let tallaSeleccionada = "";
@@ -68,14 +40,64 @@ const confirmWhatsappBtn = document.getElementById("confirm-whatsapp-btn");
 
 const themeToggle = document.getElementById("theme-toggle");
 
+// CARGA DE PRODUCTOS (DESDE MONGO DB / API O RESPALDO LOCAL)
+async function cargarCatalogoNrosen() {
+    try {
+        const respuesta = await fetch("http://localhost:5000/api/productos");
+
+        if (!respuesta.ok) {
+            throw new Error(`Error en el servidor: ${respuesta.status}`);
+        }
+
+        catalogoProductos = await respuesta.json();
+        console.log("Catálogo obtenido desde la API/MongoDB:", catalogoProductos);
+        renderProducts(catalogoProductos);
+
+    } catch (error) {
+        console.warn("No se pudo conectar a la API. Usando lista local...", error);
+        
+        // Respaldo exacto de tus productos actuales
+        catalogoProductos = [
+            {
+                id: 1,
+                nombre: "Conjunto Satinado Soft",
+                precio: 85000,
+                categoria: "lenceria",
+                descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
+                tallas: ["S", "M", "L", "XL"],
+                imagen: "images/producto1-1.jpeg",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+                ]
+            },
+            {
+                id: 2,
+                nombre: "Enterizo Satinado Soft",
+                precio: 35000,
+                categoria: "enterizos",
+                descripcion: "Enterizo ligero y suave ideal para descansar en casa con total comodidad.",
+                tallas: ["S", "M", "L", "XL"],
+                imagen: "images/producto2-1.jpeg",
+                imagenes: [
+                    "images/producto2-2.jpeg",
+                    "images/producto2-3.jpeg"
+                ]
+            }
+        ];
+        
+        renderProducts(catalogoProductos);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    renderProducts(productos);
+    cargarCatalogoNrosen();
     updateCartUI();
 });
 
 function renderProducts(lista) {
     productsContainer.innerHTML = "";
-    if (lista.length === 0) {
+    if (!lista || lista.length === 0) {
         productsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--rosa-viejo);">No hay productos disponibles.</p>`;
         return;
     }
@@ -98,11 +120,11 @@ function renderProducts(lista) {
 // BÚSQUEDA
 searchInput.addEventListener("input", (e) => {
     const query = e.target.value.toLowerCase().trim();
-    const filtrados = productos.filter(p => p.nombre.toLowerCase().includes(query));
+    const filtrados = catalogoProductos.filter(p => p.nombre.toLowerCase().includes(query));
     renderProducts(filtrados);
 });
 
-// FILTROS
+// FILTROS DE CATEGORÍA
 categoryButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         categoryButtons.forEach(b => b.classList.remove("active"));
@@ -110,9 +132,9 @@ categoryButtons.forEach(btn => {
 
         const cat = btn.getAttribute("data-category");
         if (cat === "todas") {
-            renderProducts(productos);
+            renderProducts(catalogoProductos);
         } else {
-            const filtrados = productos.filter(p => p.categoria.toLowerCase() === cat);
+            const filtrados = catalogoProductos.filter(p => p.categoria.toLowerCase() === cat);
             renderProducts(filtrados);
         }
     });
@@ -291,7 +313,6 @@ confirmWhatsappBtn.addEventListener("click", () => {
     const tel = "573045934907";
     window.open(`https://wa.me/${tel}?text=${encodeURIComponent(mensajeWhatsAppGenerado)}`, "_blank");
 
-    // Vaciar el carrito y la memoria local tras enviar el pedido
     carrito = [];
     localStorage.removeItem("cart_nrosen");
     updateCartUI();
