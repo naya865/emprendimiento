@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Conexión a MongoDB Atlas (Reemplaza <db_password> y el nombre de tu base de datos si es necesario)
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://tu_usuario:tu_password@cluster.mongodb.net/nrosen_studio?retryWrites=true&w=majority";
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://lopezsancheznayarith_db_user:<db_password>@cluster0.a1hhlgr.mongodb.net/";
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("🟢 Conectado exitosamente a MongoDB"))

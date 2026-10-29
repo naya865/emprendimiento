@@ -65,11 +65,12 @@ async function cargarCatalogoNrosen() {
                 categoria: "lenceria",
                 descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
                 tallas: ["S", "M", "L", "XL"],
-                imagen: "images/producto1-1.jpeg",
+                imagen: "images/imagenespijamas/producto1-1.jpeg",
                 imagenes: [
-                    "https://images.unsplash.com/photo-1583846783214-7229a91b20ed?auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+
                 ]
+                    
+                
             },
             {
                 id: 2,
@@ -82,6 +83,22 @@ async function cargarCatalogoNrosen() {
                 imagenes: [
                     "images/producto2-2.jpeg",
                     "images/producto2-3.jpeg"
+                ]
+            },
+            {
+                id: 3,
+                nombre:"Conjunto de lenceria",
+                precio: 25000,
+                categoria: "lenceria",
+                descripcion: "lenceria comoda y adaptable al cuerpo",
+                tallas: ["tallaunica"],
+                imagen: "images/imageneslenceria/producto1-1.jpeg",
+                imagenes: [
+                    "images/imageneslenceria/producto1-2.jpeg",
+                    "images/imageneslenceria/producto1-3.jpeg",
+                    "images/imageneslenceria/producto1-4.jpeg",
+                    "images/imageneslenceria/producto1-5.jpeg",
+                    "images/imageneslenceria/producto1-6.jpeg"
                 ]
             }
         ];
