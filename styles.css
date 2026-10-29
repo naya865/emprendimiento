@@ -307,7 +307,8 @@ html, body {
 .product-gallery img#modal-main-img {
     width: 100%;
     max-height: 250px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--rosa-palo);
     border-radius: 8px;
 }
 
@@ -321,7 +322,8 @@ html, body {
 .thumb-img {
     width: 50px;
     height: 50px;
-    object-fit: cover;
+    object-fit: contain; 
+    background-color: var(--rosa-palo);
     border-radius: 6px;
     cursor: pointer;
     border: 2px solid transparent;

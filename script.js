@@ -81,6 +81,7 @@ async function cargarCatalogoNrosen() {
                 tallas: ["S", "M", "L", "XL"],
                 imagen: "images/producto2-1.jpeg",
                 imagenes: [
+                    "images/producto2-1.jpeg",
                     "images/producto2-2.jpeg",
                     "images/producto2-3.jpeg"
                 ]
@@ -94,6 +95,7 @@ async function cargarCatalogoNrosen() {
                 tallas: ["tallaunica"],
                 imagen: "images/imageneslenceria/producto1-1.jpeg",
                 imagenes: [
+                    "images/imageneslenceria/producto1-1.jpeg",
                     "images/imageneslenceria/producto1-2.jpeg",
                     "images/imageneslenceria/producto1-3.jpeg",
                     "images/imageneslenceria/producto1-4.jpeg",
