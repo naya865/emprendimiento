@@ -43,7 +43,7 @@ function App() {
         }
     });
 
-    const [isDarkMode, setIsDarkMode] = useState(false);
+ const [isDarkMode, setIsDarkMode] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("todas");
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -101,7 +101,7 @@ function App() {
         setSelectedImage(prod.imagen);
     };
 
-    const closeModals = () => {
+     const closeModals = () => {
         setIsAboutOpen(false);
         setSelectedProduct(null);
         setIsAddProductOpen(false);
@@ -165,8 +165,7 @@ function App() {
         localStorage.removeItem("cart_nrosen");
         setIsWhatsappModalOpen(false);
     };
-
-    const handleCreateProductSubmit = (e) => {
+     const handleCreateProductSubmit = (e) => {
         e.preventDefault();
         const tallasArr = newProd.tallas.split(",").map(t => t.trim()).filter(Boolean);
         const extraImgs = newProd.imagenesExtra.split(",").map(i => i.trim()).filter(Boolean);
@@ -184,7 +183,6 @@ function App() {
                 ...extraImgs
             ]
         };
-
         setProductos(prev => [nuevo, ...prev]);
 
         fetch("http://localhost:5000/api/productos", {
@@ -231,7 +229,7 @@ function App() {
                     h('span', { id: 'cart-count' }, cartCount)
                 )
             )
-        ),
+            ),
 
         // BARRA CATEGORÍAS
         h('nav', { className: 'categories-bar' },
@@ -243,7 +241,7 @@ function App() {
                         onClick: () => setActiveCategory(cat)
                     }, cat.charAt(0).toUpperCase() + cat.slice(1))
                 )
-            )
+                )
         ),
 
         // MAIN CONTENT
@@ -283,7 +281,6 @@ function App() {
                 )
             )
         ),
-
         // MODAL PRODUCTO
         selectedProduct && h('div', { className: 'modal active' },
             h('div', { className: 'modal-content' },
@@ -368,7 +365,6 @@ function App() {
                 )
             )
         ),
-
         // CARRITO SIDEBAR
         h('div', { className: `cart-sidebar ${isCartOpen ? 'active' : ''}` },
             h('div', { className: 'cart-header' },
