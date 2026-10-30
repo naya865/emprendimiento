@@ -4,147 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>N'ROSEN Studio</title>
+
+    <!-- ESTILOS Y FUENTES -->
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- LIBRERÍAS CDN DE REACT SINS DEPENDER DE BABEL EN VIVO -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 </head>
 <body>
 
-    <!-- NAV BAR -->
-    <header class="navbar">
-        <div class="nav-left">
-            <button class="highlight-about-btn" id="open-about-modal">
-                NOSOTRAS ✨
-            </button>
-        </div>
-
-        <div class="logo-container">
-            <div class="brand-logo">
-                <span class="logo-main">N'ROSEN</span>
-                <span class="logo-sub">STUDIO</span>
-                <span class="logo-tagline">"Porque sentirse bien también se viste"</span>
-            </div>
-        </div>
-
-        <div class="nav-right">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Buscar producto...">
-            </div>
-            <button class="icon-btn" id="theme-toggle" aria-label="Cambiar tema">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            <button class="icon-btn" id="cart-toggle" aria-label="Ver bolsa de compras">
-                <i class="fa-solid fa-bag-shopping"></i>
-                <span id="cart-count">0</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- BARRA DE CATEGORÍAS CENTRADAS -->
-    <nav class="categories-bar">
-        <div class="categories-wrapper">
-            <button class="category-btn active" data-category="todas">Todas</button>
-            <button class="category-btn" data-category="lenceria">Lencería</button>
-            <button class="category-btn" data-category="pijamas">Pijamas</button>
-            <button class="category-btn" data-category="enterizos">Enterizos</button>
-            <button class="category-btn" data-category="homewear">Homewear</button>
-            <button class="category-btn" data-category="basicos">Básicos</button>
-            <button class="category-btn" data-category="accesorios">Accesorios</button>
-        </div>
-    </nav>
-
-    <!-- CATÁLOGO PRINCIPAL -->
-    <main class="main-content">
-        <h2 class="section-title">COLECCIÓN DESTACADA</h2>
-        <div class="products-grid" id="products-container">
-            <!-- Renderizado dinámicamente -->
-        </div>
-    </main>
-
-    <!-- OVERLAY MÁSCARA FONDO -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- MODAL SOBRE NOSOTRAS -->
-    <div class="modal" id="about-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-about-modal">&times;</button>
-            <img src="images/WhatsApp Image 2026-07-18 at 9.18.54 AM.jpeg" alt="Sobre N'ROSEN Studio" class="about-img">
-            <h3>Sobre N'ROSEN Studio</h3>
-            <p style="margin-top: 10px; line-height: 1.5; font-size: 0.85rem;">
-                <strong>Misión:</strong> Brindar a cada mujer prendas de loungewear, sleepwear y lencería que transmitan elegancia, comodidad y confianza en su día a día.<br><br>
-                <strong>Visión:</strong> Ser la marca referente de moda íntima y descanso por su estilo y calidad superior.
-            </p>
-        </div>
-    </div>
-
-    <!-- MODAL DETALLE DE PRODUCTO -->
-    <div class="modal" id="product-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-product-modal">&times;</button>
-            <div class="product-gallery">
-                <img id="modal-main-img" src="" alt="Producto">
-                <div class="modal-thumbnails" id="modal-thumbnails"></div>
-            </div>
-            <h3 id="modal-title"></h3>
-            <p id="modal-price" style="color: var(--rosa-viejo); font-weight: 600; margin: 5px 0;"></p>
-            <p id="modal-description" style="font-size: 0.85rem; margin-bottom: 10px;"></p>
-            
-            <label style="font-size: 0.8rem; font-weight: 600;">Talla:</label>
-            <div class="size-options" id="size-options"></div>
-
-            <button class="primary-btn" id="add-to-cart-modal-btn">Añadir a la bolsa</button>
-        </div>
-    </div>
-
-    <!-- MODAL PRE-CONFIRMACIÓN WHATSAPP -->
-    <div class="modal" id="whatsapp-modal">
-        <div class="modal-content" style="text-align: center;">
-            <button class="close-btn" id="close-whatsapp-modal">&times;</button>
-            <i class="fa-brands fa-whatsapp" style="font-size: 2.8rem; color: #25d366; margin-bottom: 10px;"></i>
-            <h3>¡Ya casi está listo!</h3>
-            <p style="font-size: 0.85rem; margin: 12px 0;">
-                Tu pedido ha sido preparado con éxito. Haz clic abajo para enviarnos tu orden directo a WhatsApp.
-            </p>
-            <button class="primary-btn" id="confirm-whatsapp-btn" style="background-color: #25d366; color: #fff;">
-                <i class="fa-brands fa-whatsapp"></i> Ir a WhatsApp
-            </button>
-        </div>
-    </div>
-
-    <!-- BOLSA / CARRITO LATERAL -->
-    <div class="cart-sidebar" id="cart-sidebar">
-        <div class="cart-header">
-            <h3>Tu Bolsa de Compras</h3>
-            <button class="close-btn" id="close-cart-btn">&times;</button>
-        </div>
-        
-        <div class="cart-items" id="cart-items">
-            <!-- Ítems del carrito -->
-        </div>
-
-        <div class="cart-footer">
-            <p class="cart-total-row">
-                <span>Total:</span>
-                <span id="cart-total">$0</span>
-            </p>
-
-            <div class="payment-selection-box">
-                <label for="payment-method-select" class="payment-label">
-                    <i class="fa-solid fa-wallet"></i> Métodos de pago aceptados:
-                </label>
-                <select id="payment-method-select" class="payment-select">
-                    <option value="Nequi">Nequi</option>
-                    <option value="Daviplata o billeteras digitales">Daviplata / Billeteras digitales</option>
-                    <option value="Efectivo">Efectivo</option>
-                </select>
-            </div>
-
-            <button class="primary-btn" id="checkout-whatsapp-btn">
-                <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
-            </button>
-        </div>
-    </div>
-
+    <!-- CONTENEDOR PRINCIPAL DONDE SE EJECUTA REACT -->
+    <div id="root"></div>
+    
+    <!-- SCRIPT DE REACT (Standard JavaScript) -->
     <script src="script.js"></script>
 </body>
 </html>
