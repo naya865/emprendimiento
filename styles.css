@@ -52,7 +52,7 @@ body {
     gap: 12px;
 }
 
-/* LOGO Y ESLOGAN AMPLIADOS */
+/* LOGO Y ESLOGAN */
 .brand-logo {
     display: flex;
     flex-direction: column;
@@ -77,10 +77,10 @@ body {
 
 .logo-tagline {
     font-family: 'Brush Script MT', cursive, serif;
-    font-size: 1.25rem; /* Eslogan más grande y visible */
+    font-size: 1.25rem;
     color: var(--rosa-viejo);
     margin-top: 4px;
-    font-weight: bold; /* Mayor definición y legibilidad */
+    font-weight: bold;
 }
 
 /* BOTONES Y CONTROLES */
@@ -224,10 +224,12 @@ body {
     transform: translateY(-4px);
 }
 
+/* IMÁGENES DE PRODUCTOS EN LA TIENDA COMPLETAS SIN RECORTES */
 .product-card img {
     width: 100%;
     height: 280px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--blanco);
 }
 
 .product-card-info {
@@ -383,7 +385,7 @@ body {
     opacity: 0.9;
 }
 
-/* DETALLE DE PRODUCTO Y GALERÍA */
+/* DETALLE DE PRODUCTO Y GALERÍA (IMÁGENES COMPLETAS SIN RECORTES) */
 .product-gallery {
     margin-bottom: 15px;
 }
@@ -391,7 +393,8 @@ body {
 .modal-main-img {
     width: 100%;
     height: 250px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--fondo-general);
     border-radius: 8px;
     margin-bottom: 8px;
 }
@@ -405,7 +408,8 @@ body {
 .thumb-img {
     width: 50px;
     height: 50px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--fondo-general);
     border-radius: 4px;
     cursor: pointer;
     border: 1px solid var(--border-color);
@@ -576,7 +580,7 @@ body {
         letter-spacing: 4px;
     }
     .logo-tagline {
-        font-size: 1.05rem; /* Adaptado para verse genial en teléfonos */
+        font-size: 1.05rem;
     }
     .search-box input {
         width: 100px;
