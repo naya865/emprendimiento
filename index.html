@@ -26,17 +26,44 @@
     <!-- SDK de EmailJS para envío de correos -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
-       (function(){
-          emailjs.init({
-            publicKey: "d7wpulaVRqCiLsCLE", 
-          });
-       })();
+        (function(){
+           emailjs.init({
+             publicKey: "d7wpulaVRqCiLsCLE", 
+           });
+        })();
     </script>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Script principal de la aplicación React -->
+    <!-- CONFIGURACIÓN E INICIALIZACIÓN DE FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Credenciales oficiales de tu proyecto NROSEN-Studio
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9rDbJlKN3Uc90HaeuX9celSyS6_kh-nA",
+            authDomain: "nrosen-studio.firebaseapp.com",
+            projectId: "nrosen-studio",
+            storageBucket: "nrosen-studio.firebasestorage.app",
+            messagingSenderId: "686091305955",
+            appId: "1:686091305955:web:964c933f6f34bc3c6c56d6"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Exponer Firebase al objeto global de la ventana (Window) para React
+        window.db = db;
+        window.firebaseTools = { collection, getDocs, addDoc };
+
+        // Notificar a la app cuando Firebase esté listo
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
+    <!-- Script principal de la aplicación React con compilador Babel -->
     <script type="text/babel" src="script.js"></script>
 </body>
 </html>

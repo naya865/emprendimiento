@@ -96,6 +96,36 @@ function App() {
     const [tallaSeleccionadaModal, setTallaSeleccionadaModal] = useState("");
     const [mensajeWS, setMensajeWS] = useState("");
 
+    // Sincronización con Firebase (Firestore Modular)
+    useEffect(() => {
+        const obtenerProductosFirebase = async () => {
+            if (window.db && window.firebaseTools) {
+                const { collection, getDocs } = window.firebaseTools;
+                try {
+                    const querySnapshot = await getDocs(collection(window.db, "productos"));
+                    const productosNube = [];
+                    querySnapshot.forEach((docSnap) => {
+                        productosNube.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (productosNube.length > 0) {
+                        setProductos(productosNube);
+                    }
+                } catch (error) {
+                    console.error("Error al cargar productos de Firebase:", error);
+                }
+            }
+        };
+
+        window.addEventListener('firebase-ready', obtenerProductosFirebase);
+        if (window.db) {
+            obtenerProductosFirebase();
+        }
+
+        return () => {
+            window.removeEventListener('firebase-ready', obtenerProductosFirebase);
+        };
+    }, []);
+
     useEffect(() => {
         localStorage.setItem("productos_nrosen", JSON.stringify(productos));
     }, [productos]);
@@ -296,20 +326,21 @@ function App() {
             metodo_pago: metodoPago
         };
 
-        // ESTRUCTURA COMPATIBLE v4 CON PUBLIC KEY INCLUIDA
-        emailjs.send(
-            "service_09o9b47",
-            "template_s5zurve",
-            templateParams,
-            "yiwylgGQuoMhGTFLS"
-        )
-        .then((response) => {
-            console.log("¡Correo enviado con éxito!", response.status, response.text);
-        })
-        .catch((err) => {
-            console.error("Error al enviar el correo:", err);
-            alert("Error al enviar correo: " + JSON.stringify(err));
-        });
+        if (window.emailjs) {
+            window.emailjs.send(
+                "service_09o9b47",
+                "template_s5zurve",
+                templateParams,
+                "yiwylgGQuoMhGTFLS"
+            )
+            .then((response) => {
+                console.log("¡Correo enviado con éxito!", response.status, response.text);
+            })
+            .catch((err) => {
+                console.error("Error al enviar el correo:", err);
+                alert("Error al enviar correo: " + JSON.stringify(err));
+            });
+        }
 
         const nuevaNoti = {
             id: Date.now(),
