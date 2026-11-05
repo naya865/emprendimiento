@@ -9,9 +9,7 @@ const PRODUCTOS_INICIALES = [
         descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
         tallas: ["S", "M", "L", "XL"],
         imagen: "images/imagenespijamas/producto1-1.jpeg",
-        imagenes: [
-            "images/imagenespijamas/producto1-1.jpeg"
-        ]
+        imagenes: ["images/imagenespijamas/producto1-1.jpeg"]
     },
     {
         id: 2,
@@ -21,28 +19,7 @@ const PRODUCTOS_INICIALES = [
         descripcion: "Enterizo ligero y suave ideal para descansar en casa con total comodidad.",
         tallas: ["S", "M", "L", "XL"],
         imagen: "images/producto2-1.jpeg",
-        imagenes: [
-            "images/producto2-1.jpeg",
-            "images/producto2-2.jpeg",
-            "images/producto2-3.jpeg"
-        ]
-    },
-    {
-        id: 3,
-        nombre: "Conjunto de lencería",
-        precio: 25000,
-        categoria: "lenceria",
-        descripcion: "Lencería cómoda y adaptable al cuerpo",
-        tallas: ["ÚNICA"],
-        imagen: "images/imageneslenceria/producto1-1.jpeg",
-        imagenes: [
-            "images/imageneslenceria/producto1-1.jpeg",
-            "images/imageneslenceria/producto1-2.jpeg",
-            "images/imageneslenceria/producto1-3.jpeg",
-            "images/imageneslenceria/producto1-4.jpeg",
-            "images/imageneslenceria/producto1-5.jpeg",
-            "images/imageneslenceria/producto1-6.jpeg"
-        ]
+        imagenes: ["images/producto2-1.jpeg"]
     }
 ];
 
@@ -95,51 +72,6 @@ function App() {
     const [imagenSeleccionadaModal, setImagenSeleccionadaModal] = useState("");
     const [tallaSeleccionadaModal, setTallaSeleccionadaModal] = useState("");
     const [mensajeWS, setMensajeWS] = useState("");
-
-    // Carga de datos desde Firestore (soporta ventana global y modular)
-    useEffect(() => {
-        const obtenerProductosFirebase = async () => {
-            try {
-                if (window.db) {
-                    let productosNube = [];
-                    // Si se usó la sintaxis modular
-                    if (window.firebaseTools) {
-                        const { collection, getDocs } = window.firebaseTools;
-                        const querySnapshot = await getDocs(collection(window.db, "productos"));
-                        querySnapshot.forEach((docSnap) => {
-                            const data = docSnap.data();
-                            if (data && data.nombre && data.precio !== undefined) {
-                                productosNube.push({ id: docSnap.id, ...data });
-                            }
-                        });
-                    } 
-                    // Si se usa la sintaxis global estándar (compat)
-                    else if (typeof window.db.collection === "function") {
-                        const querySnapshot = await window.db.collection("productos").get();
-                        querySnapshot.forEach((docSnap) => {
-                            const data = docSnap.data();
-                            if (data && data.nombre && data.precio !== undefined) {
-                                productosNube.push({ id: docSnap.id, ...data });
-                            }
-                        });
-                    }
-
-                    if (productosNube.length > 0) {
-                        setProductos(productosNube);
-                    }
-                }
-            } catch (error) {
-                console.error("Error al cargar productos de Firebase:", error);
-            }
-        };
-
-        window.addEventListener('firebase-ready', obtenerProductosFirebase);
-        obtenerProductosFirebase();
-
-        return () => {
-            window.removeEventListener('firebase-ready', obtenerProductosFirebase);
-        };
-    }, []);
 
     useEffect(() => {
         localStorage.setItem("productos_nrosen", JSON.stringify(productos));
@@ -214,7 +146,7 @@ function App() {
         setModalProductoAdmin(true);
     };
 
-    const guardarProductoAdmin = async (e) => {
+    const guardarProductoAdmin = (e) => {
         e.preventDefault();
         const listaImagenes = formAdmin.imagenes
             ? formAdmin.imagenes.split("\n").map(img => img.trim()).filter(Boolean)
@@ -223,6 +155,7 @@ function App() {
         const listaTallas = formAdmin.tallas.split(",").map(t => t.trim()).filter(Boolean);
 
         const nuevoProd = {
+            id: formAdmin.id || Date.now(),
             nombre: formAdmin.nombre,
             precio: Number(formAdmin.precio),
             categoria: formAdmin.categoria,
@@ -232,41 +165,17 @@ function App() {
             imagenes: listaImagenes.length > 0 ? listaImagenes : [formAdmin.imagen]
         };
 
-        // Guardado local y sync con Firebase si está disponible
-        try {
-            if (window.db && typeof window.db.collection === "function") {
-                if (formAdmin.id) {
-                    await window.db.collection("productos").doc(String(formAdmin.id)).set(nuevoProd, { merge: true });
-                } else {
-                    const docRef = await window.db.collection("productos").add(nuevoProd);
-                    nuevoProd.id = docRef.id;
-                }
-            }
-        } catch (err) {
-            console.error("Error al guardar en Firestore:", err);
-        }
-
-        const idFinal = formAdmin.id || nuevoProd.id || Date.now();
-        const prodFinal = { id: idFinal, ...nuevoProd };
-
         if (formAdmin.id) {
-            setProductos(productos.map(p => p.id === formAdmin.id ? prodFinal : p));
+            setProductos(productos.map(p => p.id === formAdmin.id ? nuevoProd : p));
         } else {
-            setProductos([...productos, prodFinal]);
+            setProductos([...productos, nuevoProd]);
         }
         setModalProductoAdmin(false);
     };
 
-    const eliminarProductoAdmin = async (id, e) => {
+    const eliminarProductoAdmin = (id, e) => {
         e.stopPropagation();
         if (confirm("¿Estás segura de eliminar este producto?")) {
-            try {
-                if (window.db && typeof window.db.collection === "function") {
-                    await window.db.collection("productos").doc(String(id)).delete();
-                }
-            } catch (err) {
-                console.error("Error al eliminar en Firestore:", err);
-            }
             setProductos(productos.filter(p => p.id !== id));
         }
     };
@@ -352,6 +261,7 @@ function App() {
         setModalCorreoSimulado(true);
     };
 
+    // FUNCIONALIDAD DE EMAILJS (GMAIL) QUE YA TENÍAMOS CONFIGURADA
     const confirmarCorreoYEnviarWhatsApp = () => {
         const telefonoEmpresa = "573045934907";
 
@@ -372,7 +282,7 @@ function App() {
                 "yiwylgGQuoMhGTFLS"
             )
             .then((response) => {
-                console.log("¡Correo enviado con éxito!", response.status, response.text);
+                console.log("¡Correo enviado con éxito a Gmail!", response.status, response.text);
             })
             .catch((err) => {
                 console.error("Error al enviar el correo:", err);
@@ -519,6 +429,7 @@ function App() {
                 </div>
             </main>
 
+            {/* MODAL NOSOTRAS */}
             <div className={`modal ${modalNosotras ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalNosotras(false)}>&times;</button>
@@ -531,6 +442,7 @@ function App() {
                 </div>
             </div>
 
+            {/* MODAL CLIENTE */}
             <div className={`modal ${modalCliente ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalCliente(false)}>&times;</button>
@@ -569,6 +481,7 @@ function App() {
                 </div>
             </div>
 
+            {/* MODAL ADMIN LOGIN */}
             <div className={`modal ${modalAdminLogin ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalAdminLogin(false)}>&times;</button>
@@ -590,6 +503,7 @@ function App() {
                 </div>
             </div>
 
+            {/* MODAL PRODUCTO ADMIN */}
             <div className={`modal ${modalProductoAdmin ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalProductoAdmin(false)}>&times;</button>
@@ -651,46 +565,18 @@ function App() {
                                 required
                             />
                         </div>
-                        <div className="form-group">
-                            <label>Galería (Rutas por línea):</label>
-                            <textarea
-                                className="form-input"
-                                rows="3"
-                                value={formAdmin.imagenes}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, imagenes: e.target.value })}
-                                placeholder="images/foto1.jpeg&#10;images/foto2.jpeg"
-                            ></textarea>
-                        </div>
-                        <div className="form-group">
-                            <label>Descripción:</label>
-                            <textarea
-                                className="form-input"
-                                rows="2"
-                                value={formAdmin.descripcion}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, descripcion: e.target.value })}
-                            ></textarea>
-                        </div>
                         <button type="submit" className="primary-btn">Guardar Cambios</button>
                     </form>
                 </div>
             </div>
 
+            {/* MODAL DETALLE PRODUCTO */}
             {modalDetalleProducto && (
                 <div className="modal active">
                     <div className="modal-content">
                         <button className="close-btn" onClick={() => setModalDetalleProducto(null)}>&times;</button>
                         <div className="product-gallery">
                             <img src={imagenSeleccionadaModal} alt={modalDetalleProducto.nombre} className="modal-main-img" />
-                            <div className="modal-thumbnails">
-                                {(modalDetalleProducto.imagenes || [modalDetalleProducto.imagen]).map((img, idx) => (
-                                    <img
-                                        key={idx}
-                                        src={img}
-                                        className={`thumb-img ${imagenSeleccionadaModal === img ? "active" : ""}`}
-                                        onClick={() => setImagenSeleccionadaModal(img)}
-                                    />
-                                ))}
-                            </div>
                         </div>
                         <h3>{modalDetalleProducto.nombre}</h3>
                         <p style={{ color: "var(--rosa-viejo)", fontWeight: 600, margin: "5px 0" }}>
@@ -718,6 +604,7 @@ function App() {
                 </div>
             )}
 
+            {/* MODAL CORREO SIMULADO / CONFIRMACIÓN GMAIL */}
             <div className={`modal ${modalCorreoSimulado ? "active" : ""}`}>
                 <div className="modal-content" style={{ padding: "0", overflow: "hidden", maxWidth: "450px" }}>
                     <div style={{ background: "#4a3e3d", color: "#f4ece8", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -729,23 +616,8 @@ function App() {
                         <div style={{ background: "var(--rosa-palo)", padding: "15px", borderRadius: "8px", borderLeft: "4px solid var(--rosa-viejo)", marginBottom: "15px" }}>
                             <h3 style={{ fontSize: "1rem", color: "var(--texto-principal)", marginBottom: "5px" }}>¿Confirmas tu pedido, {cliente.nombre}? ✨</h3>
                             <p style={{ fontSize: "0.8rem", color: "var(--texto-principal)" }}>
-                                Hola <strong>{cliente.email}</strong>. Hemos recibido los datos de tu orden. Haz clic en confirmar para enviar el correo real a nuestro sistema y proceder con el envío a WhatsApp.
+                                Hola <strong>{cliente.email}</strong>. Al confirmar, enviaremos los detalles de tu orden a nuestro sistema vía EmailJS y abriremos WhatsApp para finalizar.
                             </p>
-                        </div>
-
-                        <div style={{ fontSize: "0.8rem", marginBottom: "15px", maxHeight: "150px", overflowY: "auto" }}>
-                            <strong>Resumen de tu compra:</strong>
-                            {carrito.map(item => (
-                                <div key={item.cartId} style={{ display: "flex", justifyContent: "space-between", margin: "5px 0", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>
-                                    <span>{item.nombre} (Talla: {item.talla}) x{item.cantidad}</span>
-                                    <span>${(Number(item.precio || 0) * Number(item.cantidad || 0)).toLocaleString("es-CO")}</span>
-                                </div>
-                            ))}
-                            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}>
-                                <span>Total:</span>
-                                <span>${totalCarrito.toLocaleString("es-CO")}</span>
-                            </div>
-                            <p style={{ marginTop: "6px" }}><strong>Método de pago:</strong> {metodoPago}</p>
                         </div>
 
                         <button 
@@ -759,6 +631,7 @@ function App() {
                 </div>
             </div>
 
+            {/* CARRITO SIDEBAR */}
             <div className={`cart-sidebar ${carritoAbierto ? "active" : ""}`}>
                 <div className="cart-header">
                     <h3>Tu Bolsa de Compras</h3>

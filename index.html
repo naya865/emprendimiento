@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>N'ROSEN Studio</title>
     
-    <!-- Estilos CSS -->
+    <!-- CSS Principal -->
     <link rel="stylesheet" href="style.css">
 
     <!-- FontAwesome (Iconos) -->
@@ -15,37 +15,15 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
-    <!-- Babel (para JSX en navegador) -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- EmailJS -->
+    <!-- EmailJS (Para el envío de correos por Gmail) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-    <!-- LIBRERÍAS DE FIREBASE (OBLIGATORIAS PARA EVITAR "firebase is not defined") -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
     <div id="root"></div>
-
-    <!-- Inicialización de Firebase (Coloca aquí las credenciales de tu proyecto de Firebase) -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "TU_API_KEY",
-        authDomain: "TU_PROJECT_ID.firebaseapp.com",
-        projectId: "TU_PROJECT_ID",
-        storageBucket: "TU_PROJECT_ID.appspot.com",
-        messagingSenderId: "TU_SENDER_ID",
-        appId: "TU_APP_ID"
-      };
-      
-      // Inicializar Firebase
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      window.db = firebase.firestore();
-    </script>
 
     <!-- Tu script principal con Babel -->
     <script type="text/babel" src="script.js"></script>
