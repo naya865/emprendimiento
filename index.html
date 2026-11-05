@@ -3,29 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>N'ROSEN Studio</title>
+    <title>N'ROSEN Studio - Lencería y Loungewear</title>
     
-    <!-- CSS Principal -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- FontAwesome (Iconos) -->
+    <!-- Fuentes de Google: Playfair Display, Great Vibes y Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- React y ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
-    <!-- Babel -->
+    <!-- Tu archivo de estilos CSS separado -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- React y ReactDOM vía CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel para compilar JSX en el navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- EmailJS (Para el envío de correos por Gmail) -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- SDK de EmailJS para envío de correos -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init({
+            publicKey: "d7wpulaVRqCiLsCLE", 
+          });
+       })();
+    </script>
 </head>
 <body>
-
     <div id="root"></div>
 
-    <!-- Tu script principal con Babel -->
+    <!-- Script principal de la aplicación React -->
     <script type="text/babel" src="script.js"></script>
 </body>
 </html>

@@ -9,7 +9,9 @@ const PRODUCTOS_INICIALES = [
         descripcion: "Conjunto satinado suave con acabados finos y ajuste perfecto al cuerpo.",
         tallas: ["S", "M", "L", "XL"],
         imagen: "images/imagenespijamas/producto1-1.jpeg",
-        imagenes: ["images/imagenespijamas/producto1-1.jpeg"]
+        imagenes: [
+            "images/imagenespijamas/producto1-1.jpeg"
+        ]
     },
     {
         id: 2,
@@ -19,7 +21,28 @@ const PRODUCTOS_INICIALES = [
         descripcion: "Enterizo ligero y suave ideal para descansar en casa con total comodidad.",
         tallas: ["S", "M", "L", "XL"],
         imagen: "images/producto2-1.jpeg",
-        imagenes: ["images/producto2-1.jpeg"]
+        imagenes: [
+            "images/producto2-1.jpeg",
+            "images/producto2-2.jpeg",
+            "images/producto2-3.jpeg"
+        ]
+    },
+    {
+        id: 3,
+        nombre: "Conjunto de lencería",
+        precio: 25000,
+        categoria: "lenceria",
+        descripcion: "Lencería cómoda y adaptable al cuerpo",
+        tallas: ["ÚNICA"],
+        imagen: "images/imageneslenceria/producto1-1.jpeg",
+        imagenes: [
+            "images/imageneslenceria/producto1-1.jpeg",
+            "images/imageneslenceria/producto1-2.jpeg",
+            "images/imageneslenceria/producto1-3.jpeg",
+            "images/imageneslenceria/producto1-4.jpeg",
+            "images/imageneslenceria/producto1-5.jpeg",
+            "images/imageneslenceria/producto1-6.jpeg"
+        ]
     }
 ];
 
@@ -94,8 +117,8 @@ function App() {
     }, [modoOscuro]);
 
     const productosFiltrados = productos.filter(p => {
-        const coincideCat = categoriaActiva === "todas" || (p.categoria && p.categoria.toLowerCase() === categoriaActiva);
-        const coincideBusqueda = p.nombre && p.nombre.toLowerCase().includes(busqueda.toLowerCase());
+        const coincideCat = categoriaActiva === "todas" || p.categoria.toLowerCase() === categoriaActiva;
+        const coincideBusqueda = p.nombre.toLowerCase().includes(busqueda.toLowerCase());
         return coincideCat && coincideBusqueda;
     });
 
@@ -199,7 +222,7 @@ function App() {
                 cartId,
                 id: modalDetalleProducto.id,
                 nombre: modalDetalleProducto.nombre,
-                precio: Number(modalDetalleProducto.precio || 0),
+                precio: modalDetalleProducto.precio,
                 talla: tallaSeleccionadaModal,
                 imagen: modalDetalleProducto.imagen,
                 cantidad: 1
@@ -224,8 +247,8 @@ function App() {
         setCarrito(carrito.filter(item => item.cartId !== cartId));
     };
 
-    const totalCarrito = carrito.reduce((sum, item) => sum + (Number(item.precio || 0) * Number(item.cantidad || 0)), 0);
-    const cantidadTotalItems = carrito.reduce((sum, item) => sum + Number(item.cantidad || 0), 0);
+    const totalCarrito = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    const cantidadTotalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
 
     const procesarPedidoWhatsApp = () => {
         if (carrito.length === 0) {
@@ -247,7 +270,7 @@ function App() {
 
         let total = 0;
         carrito.forEach(item => {
-            const sub = Number(item.precio || 0) * Number(item.cantidad || 0);
+            const sub = item.precio * item.cantidad;
             total += sub;
             msg += `• ${item.nombre} (Talla: ${item.talla}) x${item.cantidad} - $${sub.toLocaleString("es-CO")}\n`;
         });
@@ -261,7 +284,6 @@ function App() {
         setModalCorreoSimulado(true);
     };
 
-    // FUNCIONALIDAD DE EMAILJS (GMAIL) QUE YA TENÍAMOS CONFIGURADA
     const confirmarCorreoYEnviarWhatsApp = () => {
         const telefonoEmpresa = "573045934907";
 
@@ -269,25 +291,25 @@ function App() {
             cliente_nombre: cliente.nombre,
             cliente_email: cliente.email,
             cliente_telefono: cliente.telefono,
-            detalles_pedido: carrito.map(i => `${i.nombre} (Talla: ${i.talla}) x${i.cantidad} - $${(Number(i.precio || 0) * Number(i.cantidad || 0)).toLocaleString("es-CO")}`).join("\n"),
+            detalles_pedido: carrito.map(i => `${i.nombre} (Talla: ${i.talla}) x${i.cantidad} - $${(i.precio * i.cantidad).toLocaleString("es-CO")}`).join("\n"),
             total: `$${totalCarrito.toLocaleString("es-CO")}`,
             metodo_pago: metodoPago
         };
 
-        if (window.emailjs) {
-            window.emailjs.send(
-                "service_09o9b47",
-                "template_s5zurve",
-                templateParams,
-                "yiwylgGQuoMhGTFLS"
-            )
-            .then((response) => {
-                console.log("¡Correo enviado con éxito a Gmail!", response.status, response.text);
-            })
-            .catch((err) => {
-                console.error("Error al enviar el correo:", err);
-            });
-        }
+        // ESTRUCTURA COMPATIBLE v4 CON PUBLIC KEY INCLUIDA
+        emailjs.send(
+            "service_09o9b47",
+            "template_s5zurve",
+            templateParams,
+            "yiwylgGQuoMhGTFLS"
+        )
+        .then((response) => {
+            console.log("¡Correo enviado con éxito!", response.status, response.text);
+        })
+        .catch((err) => {
+            console.error("Error al enviar el correo:", err);
+            alert("Error al enviar correo: " + JSON.stringify(err));
+        });
 
         const nuevaNoti = {
             id: Date.now(),
@@ -421,7 +443,7 @@ function App() {
                                 <img src={prod.imagen} alt={prod.nombre} />
                                 <div className="product-card-info">
                                     <h3>{prod.nombre}</h3>
-                                    <p>${Number(prod.precio || 0).toLocaleString("es-CO")}</p>
+                                    <p>${prod.precio.toLocaleString("es-CO")}</p>
                                 </div>
                             </div>
                         ))
@@ -429,7 +451,6 @@ function App() {
                 </div>
             </main>
 
-            {/* MODAL NOSOTRAS */}
             <div className={`modal ${modalNosotras ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalNosotras(false)}>&times;</button>
@@ -442,7 +463,6 @@ function App() {
                 </div>
             </div>
 
-            {/* MODAL CLIENTE */}
             <div className={`modal ${modalCliente ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalCliente(false)}>&times;</button>
@@ -481,7 +501,6 @@ function App() {
                 </div>
             </div>
 
-            {/* MODAL ADMIN LOGIN */}
             <div className={`modal ${modalAdminLogin ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalAdminLogin(false)}>&times;</button>
@@ -503,7 +522,6 @@ function App() {
                 </div>
             </div>
 
-            {/* MODAL PRODUCTO ADMIN */}
             <div className={`modal ${modalProductoAdmin ? "active" : ""}`}>
                 <div className="modal-content">
                     <button className="close-btn" onClick={() => setModalProductoAdmin(false)}>&times;</button>
@@ -565,22 +583,50 @@ function App() {
                                 required
                             />
                         </div>
+                        <div className="form-group">
+                            <label>Galería (Rutas por línea):</label>
+                            <textarea
+                                className="form-input"
+                                rows="3"
+                                value={formAdmin.imagenes}
+                                onChange={(e) => setFormAdmin({ ...formAdmin, imagenes: e.target.value })}
+                                placeholder="images/foto1.jpeg&#10;images/foto2.jpeg"
+                            ></textarea>
+                        </div>
+                        <div className="form-group">
+                            <label>Descripción:</label>
+                            <textarea
+                                className="form-input"
+                                rows="2"
+                                value={formAdmin.descripcion}
+                                onChange={(e) => setFormAdmin({ ...formAdmin, descripcion: e.target.value })}
+                            ></textarea>
+                        </div>
                         <button type="submit" className="primary-btn">Guardar Cambios</button>
                     </form>
                 </div>
             </div>
 
-            {/* MODAL DETALLE PRODUCTO */}
             {modalDetalleProducto && (
                 <div className="modal active">
                     <div className="modal-content">
                         <button className="close-btn" onClick={() => setModalDetalleProducto(null)}>&times;</button>
                         <div className="product-gallery">
                             <img src={imagenSeleccionadaModal} alt={modalDetalleProducto.nombre} className="modal-main-img" />
+                            <div className="modal-thumbnails">
+                                {(modalDetalleProducto.imagenes || [modalDetalleProducto.imagen]).map((img, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={img}
+                                        className={`thumb-img ${imagenSeleccionadaModal === img ? "active" : ""}`}
+                                        onClick={() => setImagenSeleccionadaModal(img)}
+                                    />
+                                ))}
+                            </div>
                         </div>
                         <h3>{modalDetalleProducto.nombre}</h3>
                         <p style={{ color: "var(--rosa-viejo)", fontWeight: 600, margin: "5px 0" }}>
-                            ${Number(modalDetalleProducto.precio || 0).toLocaleString("es-CO")}
+                            ${modalDetalleProducto.precio.toLocaleString("es-CO")}
                         </p>
                         <p style={{ fontSize: "0.85rem", marginBottom: "10px" }}>
                             {modalDetalleProducto.descripcion}
@@ -604,7 +650,6 @@ function App() {
                 </div>
             )}
 
-            {/* MODAL CORREO SIMULADO / CONFIRMACIÓN GMAIL */}
             <div className={`modal ${modalCorreoSimulado ? "active" : ""}`}>
                 <div className="modal-content" style={{ padding: "0", overflow: "hidden", maxWidth: "450px" }}>
                     <div style={{ background: "#4a3e3d", color: "#f4ece8", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -616,8 +661,23 @@ function App() {
                         <div style={{ background: "var(--rosa-palo)", padding: "15px", borderRadius: "8px", borderLeft: "4px solid var(--rosa-viejo)", marginBottom: "15px" }}>
                             <h3 style={{ fontSize: "1rem", color: "var(--texto-principal)", marginBottom: "5px" }}>¿Confirmas tu pedido, {cliente.nombre}? ✨</h3>
                             <p style={{ fontSize: "0.8rem", color: "var(--texto-principal)" }}>
-                                Hola <strong>{cliente.email}</strong>. Al confirmar, enviaremos los detalles de tu orden a nuestro sistema vía EmailJS y abriremos WhatsApp para finalizar.
+                                Hola <strong>{cliente.email}</strong>. Hemos recibido los datos de tu orden. Haz clic en confirmar para enviar el correo real a nuestro sistema y proceder con el envío a WhatsApp.
                             </p>
+                        </div>
+
+                        <div style={{ fontSize: "0.8rem", marginBottom: "15px", maxHeight: "150px", overflowY: "auto" }}>
+                            <strong>Resumen de tu compra:</strong>
+                            {carrito.map(item => (
+                                <div key={item.cartId} style={{ display: "flex", justifyContent: "space-between", margin: "5px 0", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>
+                                    <span>{item.nombre} (Talla: {item.talla}) x{item.cantidad}</span>
+                                    <span>${(item.precio * item.cantidad).toLocaleString("es-CO")}</span>
+                                </div>
+                            ))}
+                            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}>
+                                <span>Total:</span>
+                                <span>${totalCarrito.toLocaleString("es-CO")}</span>
+                            </div>
+                            <p style={{ marginTop: "6px" }}><strong>Método de pago:</strong> {metodoPago}</p>
                         </div>
 
                         <button 
@@ -631,7 +691,6 @@ function App() {
                 </div>
             </div>
 
-            {/* CARRITO SIDEBAR */}
             <div className={`cart-sidebar ${carritoAbierto ? "active" : ""}`}>
                 <div className="cart-header">
                     <h3>Tu Bolsa de Compras</h3>
@@ -656,7 +715,7 @@ function App() {
                                         <button className="qty-btn" onClick={() => cambiarCantidadCart(item.cartId, 1)}>+</button>
                                     </div>
                                     <p style={{ marginTop: "4px" }}>
-                                        <strong>${(Number(item.precio || 0) * Number(item.cantidad || 0)).toLocaleString("es-CO")}</strong>
+                                        <strong>${(item.precio * item.cantidad).toLocaleString("es-CO")}</strong>
                                     </p>
                                 </div>
                                 <button className="remove-item-btn" onClick={() => eliminarDelCarrito(item.cartId)}>
