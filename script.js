@@ -1,5 +1,10 @@
 const { useState, useEffect } = React;
 
+// Configuración de Supabase con tu clave pública real
+const SUPABASE_URL = "https://gdbsrowjgizzyflvcktp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_y6ebaxeYQMi3hSxstUqCmA_xs7FKHE4";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const PRODUCTOS_INICIALES = [
     {
         id: 1,
@@ -47,10 +52,44 @@ const PRODUCTOS_INICIALES = [
 ];
 
 function App() {
-    const [productos, setProductos] = useState(() => {
-        const guardados = localStorage.getItem("productos_nrosen");
-        return guardados ? JSON.parse(guardados) : PRODUCTOS_INICIALES;
-    });
+    const [productos, setProductos] = useState([]);
+
+    // Cargar productos desde Supabase al iniciar la página
+    useEffect(() => {
+        async function obtenerProductos() {
+            const { data, error } = await supabaseClient
+                .from('productos')
+                .select('*');
+
+            if (error) {
+                console.error("Error al cargar productos de Supabase:", error);
+                setProductos(PRODUCTOS_INICIALES); // Si falla, usa los iniciales
+            } else if (data && data.length > 0) {
+                // Convertir tallas e imagenes de texto a arrays si vienen como texto plano
+                const productosFormateados = data.map(p => ({
+                    ...p,
+                    tallas: typeof p.tallas === 'string' ? p.tallas.split(',').map(t => t.trim()) : (p.tallas || ["ÚNICA"]),
+                    imagenes: typeof p.imagenes === 'string' ? p.imagenes.split('\n').map(i => i.trim()).filter(Boolean) : (p.imagenes || [p.imagen])
+                }));
+                setProductos(productosFormateados);
+            } else {
+                // Si la tabla está vacía, subimos los iniciales automáticamente por ti
+                for (let prod of PRODUCTOS_INICIALES) {
+                    await supabaseClient.from('productos').insert([{
+                        nombre: prod.nombre,
+                        precio: prod.precio,
+                        categoria: prod.categoria,
+                        descripcion: prod.descripcion,
+                        tallas: prod.tallas.join(", "),
+                        imagen: prod.imagen,
+                        imagenes: prod.imagenes.join("\n")
+                    }]);
+                }
+                setProductos(PRODUCTOS_INICIALES);
+            }
+        }
+        obtenerProductos();
+    }, []);
 
     const [carrito, setCarrito] = useState(() => {
         const guardado = localStorage.getItem("cart_nrosen");
@@ -95,10 +134,6 @@ function App() {
     const [imagenSeleccionadaModal, setImagenSeleccionadaModal] = useState("");
     const [tallaSeleccionadaModal, setTallaSeleccionadaModal] = useState("");
     const [mensajeWS, setMensajeWS] = useState("");
-
-    useEffect(() => {
-        localStorage.setItem("productos_nrosen", JSON.stringify(productos));
-    }, [productos]);
 
     useEffect(() => {
         localStorage.setItem("cart_nrosen", JSON.stringify(carrito));
@@ -162,43 +197,78 @@ function App() {
             precio: p.precio,
             categoria: p.categoria,
             descripcion: p.descripcion,
-            tallas: p.tallas ? p.tallas.join(", ") : "ÚNICA",
+            tallas: Array.isArray(p.tallas) ? p.tallas.join(", ") : (p.tallas || "ÚNICA"),
             imagen: p.imagen,
-            imagenes: p.imagenes ? p.imagenes.join("\n") : p.imagen
+            imagenes: Array.isArray(p.imagenes) ? p.imagenes.join("\n") : (p.imagenes || p.imagen)
         });
         setModalProductoAdmin(true);
     };
 
-    const guardarProductoAdmin = (e) => {
+    const guardarProductoAdmin = async (e) => {
         e.preventDefault();
-        const listaImagenes = formAdmin.imagenes
-            ? formAdmin.imagenes.split("\n").map(img => img.trim()).filter(Boolean)
-            : [formAdmin.imagen];
+        const listaImagenesTexto = formAdmin.imagenes || formAdmin.imagen;
+        const listaTallasTexto = formAdmin.tallas;
 
-        const listaTallas = formAdmin.tallas.split(",").map(t => t.trim()).filter(Boolean);
-
-        const nuevoProd = {
-            id: formAdmin.id || Date.now(),
+        const objetoBD = {
             nombre: formAdmin.nombre,
             precio: Number(formAdmin.precio),
             categoria: formAdmin.categoria,
             descripcion: formAdmin.descripcion,
-            tallas: listaTallas.length > 0 ? listaTallas : ["ÚNICA"],
-            imagen: formAdmin.imagen || listaImagenes[0] || "",
-            imagenes: listaImagenes.length > 0 ? listaImagenes : [formAdmin.imagen]
+            tallas: listaTallasTexto,
+            imagen: formAdmin.imagen,
+            imagenes: listaImagenesTexto
         };
 
         if (formAdmin.id) {
-            setProductos(productos.map(p => p.id === formAdmin.id ? nuevoProd : p));
+            // Actualizar en Supabase
+            const { error } = await supabaseClient
+                .from('productos')
+                .update(objetoBD)
+                .eq('id', formAdmin.id);
+
+            if (error) {
+                alert("Hubo un error al actualizar el producto.");
+                return;
+            }
+
+            setProductos(productos.map(p => p.id === formAdmin.id ? { ...formAdmin, precio: Number(formAdmin.precio), tallas: listaTallasTexto.split(","), imagenes: listaImagenesTexto.split("\n") } : p));
         } else {
-            setProductos([...productos, nuevoProd]);
+            // Insertar nuevo en Supabase
+            const { data, error } = await supabaseClient
+                .from('productos')
+                .insert([objetoBD])
+                .select();
+
+            if (error) {
+                alert("Hubo un error al guardar el producto en la nube.");
+                return;
+            }
+
+            if (data && data[0]) {
+                const nuevoProdFormateado = {
+                    ...data[0],
+                    tallas: data[0].tallas.split(",").map(t => t.trim()),
+                    imagenes: data[0].imagenes.split("\n").map(i => i.trim())
+                };
+                setProductos([...productos, nuevoProdFormateado]);
+            }
         }
         setModalProductoAdmin(false);
     };
 
-    const eliminarProductoAdmin = (id, e) => {
+    const eliminarProductoAdmin = async (id, e) => {
         e.stopPropagation();
         if (confirm("¿Estás segura de eliminar este producto?")) {
+            const { error } = await supabaseClient
+                .from('productos')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert("No se pudo eliminar el producto.");
+                return;
+            }
+
             setProductos(productos.filter(p => p.id !== id));
         }
     };
@@ -206,7 +276,7 @@ function App() {
     const abrirDetalleProducto = (p) => {
         setModalDetalleProducto(p);
         setImagenSeleccionadaModal(p.imagen);
-        setTallaSeleccionadaModal(p.tallas ? p.tallas[0] : "ÚNICA");
+        setTallaSeleccionadaModal(p.tallas && p.tallas.length > 0 ? p.tallas[0] : "ÚNICA");
     };
 
     const agregarAlCarrito = () => {
@@ -296,7 +366,6 @@ function App() {
             metodo_pago: metodoPago
         };
 
-        // ESTRUCTURA COMPATIBLE v4 CON PUBLIC KEY INCLUIDA
         emailjs.send(
             "service_09o9b47",
             "template_s5zurve",
