@@ -9,6 +9,7 @@ const { useState, useEffect } = React;
 function App() {
     const [productos, setProductos] = useState([]);
 
+    // Cargar productos desde Supabase al iniciar la página
     useEffect(() => {
         async function obtenerProductos() {
             const { data, error } = await supabaseClient
@@ -157,15 +158,28 @@ function App() {
     };
 
     const manejarGeneracionIA = async () => {
+        const btnIA = document.getElementById('btn-generar-ia');
         try {
             if (!formAdmin.nombre) {
-                alert("Por favor escribe un nombre para el producto primero.");
+                alert("Por favor ingresa primero el nombre del producto.");
                 return;
             }
+
+            if (btnIA) {
+                btnIA.disabled = true;
+                btnIA.innerText = "✨ Generando...";
+            }
+
             const descripcionGenerada = await generarDescripcionConIA(formAdmin.nombre, formAdmin.categoria);
             setFormAdmin(prev => ({ ...prev, descripcion: descripcionGenerada }));
+
         } catch (error) {
             alert(error.message);
+        } finally {
+            if (btnIA) {
+                btnIA.disabled = false;
+                btnIA.innerText = "✨ Generar Descripción con IA";
+            }
         }
     };
 
@@ -558,14 +572,14 @@ function App() {
                             />
                         </div>
 
-                        {/* BOTÓN IA INTEGRADO DIRECTAMENTE AQUÍ */}
                         <div style={{ margin: "10px 0" }}>
                             <button 
                                 type="button" 
+                                id="btn-generar-ia"
                                 onClick={manejarGeneracionIA}
                                 style={{
                                     width: "100%",
-                                    background: "linear-gradient(135deg, var(--rosa-viejo), #d4a373)",
+                                    background: "linear-gradient(135deg, #b57a7a, #d4a373)",
                                     color: "#fff",
                                     border: "none",
                                     borderRadius: "8px",
