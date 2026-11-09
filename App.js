@@ -1,8 +1,8 @@
-// app/App.js
-import { supabaseClient } from '../services/supabaseClient.js';
-import { enviarCorreoPedido } from '../services/emailService.js';
-import { PRODUCTOS_INICIALES } from '../data/productos.js';
-import { generarDescripcionConIA } from '../services/aiService.js';
+
+import { supabaseClient } from './services/supabaseClient.js';
+import { enviarCorreoPedido } from './services/emailService.js';
+import { PRODUCTOS_INICIALES } from './data/productos.js';
+import { generarDescripcionConIA } from './services/aiService.js';
 
 const { useState, useEffect } = React;
 
