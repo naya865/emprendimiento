@@ -28,18 +28,15 @@
 
     <!-- SDK de EmailJS para envío de correos -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript">
-       (function(){
-          emailjs.init({
-            publicKey: "d7wpulaVRqCiLsCLE", 
-          });
-       })();
-    </script>
+
+    <!-- Servicios externos modulares (ajustados a su carpeta services/) -->
+    <script type="module" src="services/supabaseClient.js"></script>
+    <script type="module" src="services/emailService.js"></script>
 </head>
 <body>
     <div id="root"></div>
 
-    <!-- Script principal de la aplicación React -->
-    <script type="text/babel" src="script.js"></script>
+    <!-- Script principal de arranque convertido a módulo -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
