@@ -1,7 +1,7 @@
 // App.js (Sin Babel - JavaScript puro)
 import { supabaseClient } from './services/supabaseClient.js';
 import { enviarCorreoPedido } from './services/emailService.js';
-import { PRODUCTOS_INICIALES } from '../data/productos.js';
+import { PRODUCTOS_INICIALES } from './productos.js';
 import { generarDescripcionConIA } from './services/aiService.js';
 
 const { useState, useEffect, createElement: h } = React;

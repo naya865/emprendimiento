@@ -1,4 +1,4 @@
-// data/productos.js
+
 export const PRODUCTOS_INICIALES = [
     {
         id: 1,
