@@ -9,10 +9,8 @@ export const generarDescripcionConIA = async (nombre, categoria) => {
     Categoría: "${categoria}". 
     Responde solo con la descripción en español, en 2 o 3 frases cautivadoras, sin comillas ni texto adicional.`;
 
-    // Clave dividida para evitar el bloqueo del escáner de seguridad de GitHub
-    const parte1 = "AQ.Ab8RN6ISdRB0ds_";
-    const parte2 = "b0rUh5IN13Dh5Nv6iUFP_nHQ4BMLGMQvoXQ";
-    const API_KEY = window.GEMINI_API_KEY || (parte1 + parte2);
+    // Pega aquí la clave exacta que te aparece en la imagen (la que empieza por AQ...)
+    const API_KEY = "AQ.Ab8RN6IaZdFY8qrs3VzjInELP3rPKqB6XQfQD0vA0zESQTNGw";
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
         method: "POST",
@@ -23,10 +21,15 @@ export const generarDescripcionConIA = async (nombre, categoria) => {
     });
 
     const data = await response.json();
+    
+    if (!response.ok) {
+        throw new Error(data.error?.message || "Error al conectar con la IA.");
+    }
+
     const textoGenerado = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!textoGenerado) {
-        throw new Error("No se pudo obtener la descripción de la IA. Revisa la consola o intenta de nuevo.");
+        throw new Error("No se pudo obtener la descripción de la IA.");
     }
 
     return textoGenerado.trim();
