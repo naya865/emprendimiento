@@ -1,15 +1,14 @@
-
+// App.js (Sin Babel - JavaScript puro)
 import { supabaseClient } from './services/supabaseClient.js';
 import { enviarCorreoPedido } from './services/emailService.js';
-import { PRODUCTOS_INICIALES } from './data/productos.js';
+import { PRODUCTOS_INICIALES } from '../data/productos.js';
 import { generarDescripcionConIA } from './services/aiService.js';
 
-const { useState, useEffect } = React;
+const { useState, useEffect, createElement: h } = React;
 
 function App() {
     const [productos, setProductos] = useState([]);
 
-    // Cargar productos desde Supabase al iniciar la página
     useEffect(() => {
         async function obtenerProductos() {
             const { data, error } = await supabaseClient
@@ -304,7 +303,7 @@ function App() {
         }
 
         if (!cliente.nombre || !cliente.telefono || !cliente.email) {
-            alert("Por favor, completa tu información de cliente (Nombre, Teléfono y Correo) antes de pedir.");
+            alert("Por favor, completa tu información de cliente antes de pedir.");
             setCarritoAbierto(false);
             setModalCliente(true);
             return;
@@ -334,14 +333,7 @@ function App() {
     const confirmarCorreoYEnviarWhatsApp = () => {
         const telefonoEmpresa = "573045934907";
 
-        enviarCorreoPedido(cliente, carrito, totalCarrito, metodoPago)
-            .then((response) => {
-                console.log("¡Correo enviado con éxito!", response.status, response.text);
-            })
-            .catch((err) => {
-                console.error("Error al enviar el correo:", err);
-                alert("Error al enviar correo: " + JSON.stringify(err));
-            });
+        enviarCorreoPedido(cliente, carrito, totalCarrito, metodoPago).catch(err => console.error(err));
 
         const nuevaNoti = {
             id: Date.now(),
@@ -368,450 +360,285 @@ function App() {
 
     const hayModalAbierto = modalNosotras || modalCliente || modalAdminLogin || modalProductoAdmin || modalDetalleProducto || modalCorreoSimulado || carritoAbierto;
 
-    return (
-        <div>
-            <div className={`overlay ${hayModalAbierto ? "active" : ""}`} onClick={cerrarTodosModales}></div>
+    return h('div', null,
+        h('div', { className: `overlay ${hayModalAbierto ? "active" : ""}`, onClick: cerrarTodosModales }),
 
-            <header className="navbar">
-                <div className="nav-left">
-                    <button className="highlight-about-btn" onClick={() => setModalNosotras(true)}>
-                        NOSOTRAS ✨
-                    </button>
-                    {esAdmin ? (
-                        <button className="admin-badge-btn" onClick={abrirModalNuevoProducto}>
-                            + Producto
-                        </button>
-                    ) : null}
-                </div>
+        h('header', { className: 'navbar' },
+            h('div', { className: 'nav-left' },
+                h('button', { className: 'highlight-about-btn', onClick: () => setModalNosotras(true) }, 'NOSOTRAS ✨'),
+                esAdmin ? h('button', { className: 'admin-badge-btn', onClick: abrirModalNuevoProducto }, '+ Producto') : null
+            ),
+            h('div', { className: 'logo-container' },
+                h('div', { className: 'brand-logo' },
+                    h('span', { className: 'logo-main' }, "N'ROSEN"),
+                    h('span', { className: 'logo-sub' }, "STUDIO"),
+                    h('span', { className: 'logo-tagline' }, '"Porque sentirse bien también se viste"')
+                )
+            ),
+            h('div', { className: 'nav-right' },
+                h('div', { className: 'search-box' },
+                    h('input', { type: 'text', placeholder: 'Buscar producto...', value: busqueda, onChange: (e) => setBusqueda(e.target.value) })
+                ),
+                h('button', { className: 'icon-btn', onClick: () => setModalCliente(true), title: 'Mi Perfil' },
+                    h('i', { className: 'fa-solid fa-user' })
+                ),
+                h('button', { className: 'icon-btn', onClick: () => setModoOscuro(!modoOscuro), title: 'Cambiar tema' },
+                    h('i', { className: `fa-solid ${modoOscuro ? "fa-sun" : "fa-moon"}` })
+                ),
+                h('button', { className: 'icon-btn', onClick: () => setCarritoAbierto(true), title: 'Bolsa' },
+                    h('i', { className: 'fa-solid fa-bag-shopping' }),
+                    h('span', { id: 'cart-count' }, cantidadTotalItems)
+                ),
+                esAdmin 
+                    ? h('button', { className: 'icon-btn', onClick: handleCerrarSesionAdmin, title: 'Cerrar Admin', style: { color: "#b57a7a" } },
+                        h('i', { className: 'fa-solid fa-right-from-bracket' })
+                      )
+                    : h('button', { className: 'icon-btn', onClick: () => setModalAdminLogin(true), title: 'Acceso Admin' },
+                        h('i', { className: 'fa-solid fa-lock' })
+                      )
+            )
+        ),
 
-                <div className="logo-container">
-                    <div className="brand-logo">
-                        <span className="logo-main">N'ROSEN</span>
-                        <span className="logo-sub">STUDIO</span>
-                        <span className="logo-tagline">"Porque sentirse bien también se viste"</span>
-                    </div>
-                </div>
+        (esAdmin && notificacionesAdmin.length > 0) ? h('div', { style: { background: "var(--rosa-palo)", borderBottom: "1px solid var(--border-color)", padding: "8px 4%", fontSize: "0.8rem", color: "var(--texto-principal)" } },
+            h('strong', null, '🔔 Notificaciones Admin:'),
+            h('ul', { style: { margin: "4px 0 0 15px" } }, notificacionesAdmin.map(n => h('li', { key: n.id }, `[${n.hora}] ${n.texto}`)))
+        ) : null,
 
-                <div className="nav-right">
-                    <div className="search-box">
-                        <input
-                            type="text"
-                            placeholder="Buscar producto..."
-                            value={busqueda}
-                            onChange={(e) => setBusqueda(e.target.value)}
-                        />
-                    </div>
-                    
-                    <button className="icon-btn" onClick={() => setModalCliente(true)} title="Mi Perfil / Datos">
-                        <i className="fa-solid fa-user"></i>
-                    </button>
+        h('nav', { className: 'categories-bar' },
+            h('div', { className: 'categories-wrapper' }, 
+                ["todas", "lenceria", "pijamas", "enterizos", "homewear", "basicos", "accesorios"].map((cat) => 
+                    h('button', {
+                        key: cat,
+                        className: `category-btn ${categoriaActiva === cat ? "active" : ""}`,
+                        onClick: () => setCategoriaActiva(cat)
+                    }, cat.charAt(0).toUpperCase() + cat.slice(1))
+                )
+            )
+        ),
 
-                    <button className="icon-btn" onClick={() => setModoOscuro(!modoOscuro)} title="Cambiar tema">
-                        <i className={`fa-solid ${modoOscuro ? "fa-sun" : "fa-moon"}`}></i>
-                    </button>
+        h('main', { className: 'main-content' },
+            h('h2', { className: 'section-title' }, 'COLECCIÓN DESTACADA'),
+            h('div', { className: 'products-grid' }, 
+                productosFiltrados.length === 0 
+                    ? h('p', { style: { gridColumn: "1/-1", textAlign: "center", color: "var(--rosa-viejo)" } }, 'No se encontraron productos.')
+                    : productosFiltrados.map((prod) => 
+                        h('div', { key: prod.id, className: 'product-card', onClick: () => abrirDetalleProducto(prod) },
+                            esAdmin ? h('div', { className: 'admin-actions' },
+                                h('button', { onClick: (e) => abrirModalEditarProducto(prod, e) }, h('i', { className: 'fa-solid fa-pen' })),
+                                h('button', { onClick: (e) => eliminarProductoAdmin(prod.id, e) }, h('i', { className: 'fa-solid fa-trash' }))
+                            ) : null,
+                            h('img', { src: prod.imagen, alt: prod.nombre }),
+                            h('div', { className: 'product-card-info' },
+                                h('h3', null, prod.nombre),
+                                h('p', null, `$${prod.precio.toLocaleString("es-CO")}`)
+                            )
+                        )
+                    )
+            )
+        ),
 
-                    <button className="icon-btn" onClick={() => setCarritoAbierto(true)} title="Bolsa de compras">
-                        <i className="fa-solid fa-bag-shopping"></i>
-                        <span id="cart-count">{cantidadTotalItems}</span>
-                    </button>
+        modalNosotras ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content' },
+                h('button', { className: 'close-btn', onClick: () => setModalNosotras(false) }, '×'),
+                h('img', { src: "images/WhatsApp Image 2026-07-18 at 9.18.54 AM.jpeg", alt: "Sobre N'ROSEN Studio", className: "about-img" }),
+                h('h3', null, "Sobre N'ROSEN Studio"),
+                h('p', { style: { marginTop: "10px", lineHeight: "1.5", fontSize: "0.85rem" } },
+                    h('strong', null, 'Misión:'), ' Brindar a cada mujer prendas de loungewear, sleepwear y lencería que transmitan elegancia, comodidad y confianza en su día a día.',
+                    h('br', null), h('br', null),
+                    h('strong', null, 'Visión:'), ' Ser la marca referente de moda íntima y descanso por su estilo y calidad superior.'
+                )
+            )
+        ) : null,
 
-                    {esAdmin ? (
-                        <button className="icon-btn" onClick={handleCerrarSesionAdmin} title="Cerrar Modo Admin" style={{ color: "#b57a7a" }}>
-                            <i className="fa-solid fa-right-from-bracket"></i>
-                        </button>
-                    ) : (
-                        <button className="icon-btn" onClick={() => setModalAdminLogin(true)} title="Acceso Admin">
-                            <i className="fa-solid fa-lock"></i>
-                        </button>
-                    )}
-                </div>
-            </header>
+        modalCliente ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content' },
+                h('button', { className: 'close-btn', onClick: () => setModalCliente(false) }, '×'),
+                h('h3', { style: { marginBottom: "15px" } }, 'Perfil de Cliente'),
+                h('div', { className: 'form-group' },
+                    h('label', null, 'Nombre Completo:'),
+                    h('input', { type: 'text', className: 'form-input', value: cliente.nombre, onChange: (e) => setCliente({ ...cliente, nombre: e.target.value }), placeholder: 'Tu nombre' })
+                ),
+                h('div', { className: 'form-group' },
+                    h('label', null, 'Correo Gmail / Email:'),
+                    h('input', { type: 'email', className: 'form-input', value: cliente.email, onChange: (e) => setCliente({ ...cliente, email: e.target.value }), placeholder: 'ejemplo@gmail.com' })
+                ),
+                h('div', { className: 'form-group' },
+                    h('label', null, 'Número de WhatsApp / Teléfono:'),
+                    h('input', { type: 'text', className: 'form-input', value: cliente.telefono, onChange: (e) => setCliente({ ...cliente, telefono: e.target.value }), placeholder: '300 000 0000' })
+                ),
+                h('button', { className: 'primary-btn', onClick: () => setModalCliente(false) }, 'Guardar Datos')
+            )
+        ) : null,
 
-            {esAdmin && notificacionesAdmin.length > 0 && (
-                <div style={{ background: "var(--rosa-palo)", borderBottom: "1px solid var(--border-color)", padding: "8px 4%", fontSize: "0.8rem", color: "var(--texto-principal)" }}>
-                    <strong>🔔 Notificaciones Admin:</strong>
-                    <ul style={{ margin: "4px 0 0 15px" }}>
-                        {notificacionesAdmin.map(n => (
-                            <li key={n.id}>[{n.hora}] {n.texto}</li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+        modalAdminLogin ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content' },
+                h('button', { className: 'close-btn', onClick: () => setModalAdminLogin(false) }, '×'),
+                h('h3', null, 'Acceso Administradora'),
+                h('form', { onSubmit: handleLoginAdmin, style: { marginTop: "15px" } },
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Contraseña de acceso:'),
+                        h('input', { type: 'password', className: 'form-input', value: claveInput, onChange: (e) => setClaveInput(e.target.value), placeholder: 'Ingresa clave', required: true })
+                    ),
+                    h('button', { type: 'submit', className: 'primary-btn' }, 'Ingresar como Admin')
+                )
+            )
+        ) : null,
 
-            <nav className="categories-bar">
-                <div className="categories-wrapper">
-                    {["todas", "lenceria", "pijamas", "enterizos", "homewear", "basicos", "accesorios"].map((cat) => (
-                        <button
-                            key={cat}
-                            className={`category-btn ${categoriaActiva === cat ? "active" : ""}`}
-                            onClick={() => setCategoriaActiva(cat)}
-                        >
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                        </button>
-                    ))}
-                </div>
-            </nav>
+        modalProductoAdmin ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content' },
+                h('button', { className: 'close-btn', onClick: () => setModalProductoAdmin(false) }, '×'),
+                h('h3', null, formAdmin.id ? "Editar Producto" : "Nuevo Producto"),
+                h('form', { onSubmit: guardarProductoAdmin },
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Nombre:'),
+                        h('input', { type: 'text', className: 'form-input', value: formAdmin.nombre, onChange: (e) => setFormAdmin({ ...formAdmin, nombre: e.target.value }), placeholder: 'Ej: Conjunto de satín', required: true })
+                    ),
+                    h('div', { style: { margin: "10px 0" } },
+                        h('button', { type: 'button', id: 'btn-generar-ia', onClick: manejarGeneracionIA, style: { width: "100%", background: "linear-gradient(135deg, #b57a7a, #d4a373)", color: "#fff", border: "none", borderRadius: "8px", padding: "8px 12px", fontSize: "0.85rem", cursor: "pointer", fontWeight: "bold", boxShadow: "0 2px 5px rgba(0,0,0,0.2)" } }, '✨ Generar Descripción con IA')
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Precio ($ COP):'),
+                        h('input', { type: 'number', className: 'form-input', value: formAdmin.precio, onChange: (e) => setFormAdmin({ ...formAdmin, precio: e.target.value }), required: true })
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Categoría:'),
+                        h('select', { className: 'form-input', value: formAdmin.categoria, onChange: (e) => setFormAdmin({ ...formAdmin, categoria: e.target.value }) },
+                            h('option', { value: 'lenceria' }, 'Lencería'),
+                            h('option', { value: 'pijamas' }, 'Pijamas'),
+                            h('option', { value: 'enterizos' }, 'Enterizos'),
+                            h('option', { value: 'homewear' }, 'Homewear'),
+                            h('option', { value: 'basicos' }, 'Básicos'),
+                            h('option', { value: 'accesorios' }, 'Accesorios')
+                        )
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Tallas (separadas por coma):'),
+                        h('input', { type: 'text', className: 'form-input', value: formAdmin.tallas, onChange: (e) => setFormAdmin({ ...formAdmin, tallas: e.target.value }), placeholder: 'S, M, L, XL' })
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Imagen Principal (Ruta o URL):'),
+                        h('input', { type: 'text', className: 'form-input', value: formAdmin.imagen, onChange: (e) => setFormAdmin({ ...formAdmin, imagen: e.target.value }), placeholder: 'images/producto.jpeg', required: true })
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Galería (Rutas por línea):'),
+                        h('textarea', { className: 'form-input', rows: '2', value: formAdmin.imagenes, onChange: (e) => setFormAdmin({ ...formAdmin, imagenes: e.target.value }), placeholder: 'images/foto1.jpeg\nimages/foto2.jpeg' })
+                    ),
+                    h('div', { className: 'form-group' },
+                        h('label', null, 'Descripción:'),
+                        h('textarea', { className: 'form-input', rows: '3', value: formAdmin.descripcion, onChange: (e) => setFormAdmin({ ...formAdmin, descripcion: e.target.value }), placeholder: 'Escribe el nombre y presiona el botón de arriba...' })
+                    ),
+                    h('button', { type: 'submit', className: 'primary-btn' }, 'Guardar Cambios')
+                )
+            )
+        ) : null,
 
-            <main className="main-content">
-                <h2 className="section-title">COLECCIÓN DESTACADA</h2>
-                <div className="products-grid">
-                    {productosFiltrados.length === 0 ? (
-                        <p style={{ gridColumn: "1/-1", textAlign: "center", color: "var(--rosa-viejo)" }}>
-                            No se encontraron productos.
-                        </p>
-                    ) : (
-                        productosFiltrados.map((prod) => (
-                            <div key={prod.id} className="product-card" onClick={() => abrirDetalleProducto(prod)}>
-                                {esAdmin && (
-                                    <div className="admin-actions">
-                                        <button onClick={(e) => abrirModalEditarProducto(prod, e)}>
-                                            <i className="fa-solid fa-pen"></i>
-                                        </button>
-                                        <button onClick={(e) => eliminarProductoAdmin(prod.id, e)}>
-                                            <i className="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
-                                )}
-                                <img src={prod.imagen} alt={prod.nombre} />
-                                <div className="product-card-info">
-                                    <h3>{prod.nombre}</h3>
-                                    <p>${prod.precio.toLocaleString("es-CO")}</p>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </main>
+        modalDetalleProducto ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content' },
+                h('button', { className: 'close-btn', onClick: () => setModalDetalleProducto(null) }, '×'),
+                h('div', { className: 'product-gallery' },
+                    h('img', { src: imagenSeleccionadaModal, alt: modalDetalleProducto.nombre, className: 'modal-main-img' }),
+                    h('div', { className: 'modal-thumbnails' }, 
+                        (modalDetalleProducto.imagenes || [modalDetalleProducto.imagen]).map((img, idx) => 
+                            h('img', { key: idx, src: img, className: `thumb-img ${imagenSeleccionadaModal === img ? "active" : ""}`, onClick: () => setImagenSeleccionadaModal(img) })
+                        )
+                    )
+                ),
+                h('h3', null, modalDetalleProducto.nombre),
+                h('p', { style: { color: "var(--rosa-viejo)", fontWeight: 600, margin: "5px 0" } }, `$${modalDetalleProducto.precio.toLocaleString("es-CO")}`),
+                h('p', { style: { fontSize: "0.85rem", marginBottom: "10px" } }, modalDetalleProducto.descripcion),
+                h('label', { style: { fontSize: "0.8rem", fontWeight: 600 } }, 'Talla:'),
+                h('div', { className: 'size-options' }, 
+                    (modalDetalleProducto.tallas || ["ÚNICA"]).map((talla) => 
+                        h('button', { key: talla, className: `size-btn ${tallaSeleccionadaModal === talla ? "active" : ""}`, onClick: () => setTallaSeleccionadaModal(talla) }, talla)
+                    )
+                ),
+                h('button', { className: 'primary-btn', onClick: agregarAlCarrito }, 'Añadir a la bolsa')
+            )
+        ) : null,
 
-            <div className={`modal ${modalNosotras ? "active" : ""}`}>
-                <div className="modal-content">
-                    <button className="close-btn" onClick={() => setModalNosotras(false)}>&times;</button>
-                    <img src="images/WhatsApp Image 2026-07-18 at 9.18.54 AM.jpeg" alt="Sobre N'ROSEN Studio" className="about-img" />
-                    <h3>Sobre N'ROSEN Studio</h3>
-                    <p style={{ marginTop: "10px", lineHeight: "1.5", fontSize: "0.85rem" }}>
-                        <strong>Misión:</strong> Brindar a cada mujer prendas de loungewear, sleepwear y lencería que transmitan elegancia, comodidad y confianza en su día a día.<br/><br/>
-                        <strong>Visión:</strong> Ser la marca referente de moda íntima y descanso por su estilo y calidad superior.
-                    </p>
-                </div>
-            </div>
+        modalCorreoSimulado ? h('div', { className: 'modal active' },
+            h('div', { className: 'modal-content', style: { padding: "0", overflow: "hidden", maxWidth: "450px" } },
+                h('div', { style: { background: "#4a3e3d", color: "#f4ece8", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" } },
+                    h('span', { style: { fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", letterSpacing: "1px" } }, "N'ROSEN Studio"),
+                    h('button', { className: 'close-btn', onClick: () => setModalCorreoSimulado(false), style: { color: "#f4ece8", position: "static" } }, '×')
+                ),
+                h('div', { style: { padding: "20px" } },
+                    h('div', { style: { background: "var(--rosa-palo)", padding: "15px", borderRadius: "8px", borderLeft: "4px solid var(--rosa-viejo)", marginBottom: "15px" } },
+                        h('h3', { style: { fontSize: "1rem", color: "var(--texto-principal)", marginBottom: "5px" } }, `¿Confirmas tu pedido, ${cliente.nombre}? ✨`),
+                        h('p', { style: { fontSize: "0.8rem", color: "var(--texto-principal)" } },
+                            'Hola ', h('strong', null, cliente.email), '. Hemos recibido los datos de tu orden. Haz clic en confirmar para enviar el correo y proceder con el envío a WhatsApp.'
+                        )
+                    ),
+                    h('div', { style: { fontSize: "0.8rem", marginBottom: "15px", maxHeight: "150px", overflowY: "auto" } },
+                        h('strong', null, 'Resumen de tu compra:'),
+                        carrito.map(item => 
+                            h('div', { key: item.cartId, style: { display: "flex", justifyContent: "space-between", margin: "5px 0", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" } },
+                                h('span', null, `${item.nombre} (Talla: ${item.talla}) x${item.cantidad}`),
+                                h('span', null, `$${(item.precio * item.cantidad).toLocaleString("es-CO")}`)
+                            )
+                        ),
+                        h('div', { style: { display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" } },
+                            h('span', null, 'Total:'),
+                            h('span', null, `$${totalCarrito.toLocaleString("es-CO")}`)
+                        ),
+                        h('p', { style: { marginTop: "6px" } }, h('strong', null, 'Método de pago: '), metodoPago)
+                    ),
+                    h('button', { className: 'primary-btn', onClick: confirmarCorreoYEnviarWhatsApp, style: { backgroundColor: "#25d366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" } },
+                        h('i', { className: 'fa-solid fa-check-circle' }), ' Confirmar y Enviar a WhatsApp'
+                    )
+                )
+            )
+        ) : null,
 
-            <div className={`modal ${modalCliente ? "active" : ""}`}>
-                <div className="modal-content">
-                    <button className="close-btn" onClick={() => setModalCliente(false)}>&times;</button>
-                    <h3 style={{ marginBottom: "15px" }}>Perfil de Cliente</h3>
-                    <div className="form-group">
-                        <label>Nombre Completo:</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={cliente.nombre}
-                            onChange={(e) => setCliente({ ...cliente, nombre: e.target.value })}
-                            placeholder="Tu nombre"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Correo Gmail / Email:</label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            value={cliente.email}
-                            onChange={(e) => setCliente({ ...cliente, email: e.target.value })}
-                            placeholder="ejemplo@gmail.com"
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Número de WhatsApp / Teléfono:</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={cliente.telefono}
-                            onChange={(e) => setCliente({ ...cliente, telefono: e.target.value })}
-                            placeholder="300 000 0000"
-                        />
-                    </div>
-                    <button className="primary-btn" onClick={() => setModalCliente(false)}>Guardar Datos</button>
-                </div>
-            </div>
-
-            <div className={`modal ${modalAdminLogin ? "active" : ""}`}>
-                <div className="modal-content">
-                    <button className="close-btn" onClick={() => setModalAdminLogin(false)}>&times;</button>
-                    <h3>Acceso Administradora</h3>
-                    <form onSubmit={handleLoginAdmin} style={{ marginTop: "15px" }}>
-                        <div className="form-group">
-                            <label>Contraseña de acceso:</label>
-                            <input
-                                type="password"
-                                className="form-input"
-                                value={claveInput}
-                                onChange={(e) => setClaveInput(e.target.value)}
-                                placeholder="Ingresa clave"
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="primary-btn">Ingresar como Admin</button>
-                    </form>
-                </div>
-            </div>
-
-            <div className={`modal ${modalProductoAdmin ? "active" : ""}`}>
-                <div className="modal-content">
-                    <button className="close-btn" onClick={() => setModalProductoAdmin(false)}>&times;</button>
-                    <h3>{formAdmin.id ? "Editar Producto" : "Nuevo Producto"}</h3>
-
-                    <form onSubmit={guardarProductoAdmin}>
-                        <div className="form-group">
-                            <label>Nombre:</label>
-                            <input
-                                type="text"
-                                className="form-input"
-                                value={formAdmin.nombre}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, nombre: e.target.value })}
-                                placeholder="Ej: Conjunto de satín"
-                                required
-                            />
-                        </div>
-
-                        <div style={{ margin: "10px 0" }}>
-                            <button 
-                                type="button" 
-                                id="btn-generar-ia"
-                                onClick={manejarGeneracionIA}
-                                style={{
-                                    width: "100%",
-                                    background: "linear-gradient(135deg, #b57a7a, #d4a373)",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "8px",
-                                    padding: "8px 12px",
-                                    fontSize: "0.85rem",
-                                    cursor: "pointer",
-                                    fontWeight: "bold",
-                                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)"
-                                }}
-                            >
-                                ✨ Generar Descripción con IA
-                            </button>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Precio ($ COP):</label>
-                            <input
-                                type="number"
-                                className="form-input"
-                                value={formAdmin.precio}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, precio: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Categoría:</label>
-                            <select
-                                className="form-input"
-                                value={formAdmin.categoria}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, categoria: e.target.value })}
-                            >
-                                <option value="lenceria">Lencería</option>
-                                <option value="pijamas">Pijamas</option>
-                                <option value="enterizos">Enterizos</option>
-                                <option value="homewear">Homewear</option>
-                                <option value="basicos">Básicos</option>
-                                <option value="accesorios">Accesorios</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Tallas (separadas por coma):</label>
-                            <input
-                                type="text"
-                                className="form-input"
-                                value={formAdmin.tallas}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, tallas: e.target.value })}
-                                placeholder="S, M, L, XL"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Imagen Principal (Ruta o URL):</label>
-                            <input
-                                type="text"
-                                className="form-input"
-                                value={formAdmin.imagen}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, imagen: e.target.value })}
-                                placeholder="images/producto.jpeg"
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Galería (Rutas por línea):</label>
-                            <textarea
-                                className="form-input"
-                                rows="2"
-                                value={formAdmin.imagenes}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, imagenes: e.target.value })}
-                                placeholder="images/foto1.jpeg&#10;images/foto2.jpeg"
-                            ></textarea>
-                        </div>
-                        <div className="form-group">
-                            <label>Descripción:</label>
-                            <textarea
-                                className="form-input"
-                                rows="3"
-                                value={formAdmin.descripcion}
-                                onChange={(e) => setFormAdmin({ ...formAdmin, descripcion: e.target.value })}
-                                placeholder="Escribe el nombre y presiona el botón de arriba..."
-                            ></textarea>
-                        </div>
-
-                        <button type="submit" className="primary-btn">Guardar Cambios</button>
-                    </form>
-                </div>
-            </div>
-
-            {modalDetalleProducto && (
-                <div className="modal active">
-                    <div className="modal-content">
-                        <button className="close-btn" onClick={() => setModalDetalleProducto(null)}>&times;</button>
-                        <div className="product-gallery">
-                            <img src={imagenSeleccionadaModal} alt={modalDetalleProducto.nombre} className="modal-main-img" />
-                            <div className="modal-thumbnails">
-                                {(modalDetalleProducto.imagenes || [modalDetalleProducto.imagen]).map((img, idx) => (
-                                    <img
-                                        key={idx}
-                                        src={img}
-                                        className={`thumb-img ${imagenSeleccionadaModal === img ? "active" : ""}`}
-                                        onClick={() => setImagenSeleccionadaModal(img)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                        <h3>{modalDetalleProducto.nombre}</h3>
-                        <p style={{ color: "var(--rosa-viejo)", fontWeight: 600, margin: "5px 0" }}>
-                            ${modalDetalleProducto.precio.toLocaleString("es-CO")}
-                        </p>
-                        <p style={{ fontSize: "0.85rem", marginBottom: "10px" }}>
-                            {modalDetalleProducto.descripcion}
-                        </p>
-
-                        <label style={{ fontSize: "0.8rem", fontWeight: 600 }}>Talla:</label>
-                        <div className="size-options">
-                            {(modalDetalleProducto.tallas || ["ÚNICA"]).map((talla) => (
-                                <button
-                                    key={talla}
-                                    className={`size-btn ${tallaSeleccionadaModal === talla ? "active" : ""}`}
-                                    onClick={() => setTallaSeleccionadaModal(talla)}
-                                >
-                                    {talla}
-                                </button>
-                            ))}
-                        </div>
-
-                        <button className="primary-btn" onClick={agregarAlCarrito}>Añadir a la bolsa</button>
-                    </div>
-                </div>
-            )}
-
-            <div className={`modal ${modalCorreoSimulado ? "active" : ""}`}>
-                <div className="modal-content" style={{ padding: "0", overflow: "hidden", maxWidth: "450px" }}>
-                    <div style={{ background: "#4a3e3d", color: "#f4ece8", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", letterSpacing: "1px" }}>N'ROSEN Studio</span>
-                        <button className="close-btn" onClick={() => setModalCorreoSimulado(false)} style={{ color: "#f4ece8", position: "static" }}>&times;</button>
-                    </div>
-
-                    <div style={{ padding: "20px" }}>
-                        <div style={{ background: "var(--rosa-palo)", padding: "15px", borderRadius: "8px", borderLeft: "4px solid var(--rosa-viejo)", marginBottom: "15px" }}>
-                            <h3 style={{ fontSize: "1rem", color: "var(--texto-principal)", marginBottom: "5px" }}>¿Confirmas tu pedido, {cliente.nombre}? ✨</h3>
-                            <p style={{ fontSize: "0.8rem", color: "var(--texto-principal)" }}>
-                                Hola <strong>{cliente.email}</strong>. Hemos recibido los datos de tu orden. Haz clic en confirmar para enviar el correo real a nuestro sistema y proceder con el envío a WhatsApp.
-                            </p>
-                        </div>
-
-                        <div style={{ fontSize: "0.8rem", marginBottom: "15px", maxHeight: "150px", overflowY: "auto" }}>
-                            <strong>Resumen de tu compra:</strong>
-                            {carrito.map(item => (
-                                <div key={item.cartId} style={{ display: "flex", justifyContent: "space-between", margin: "5px 0", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>
-                                    <span>{item.nombre} (Talla: {item.talla}) x{item.cantidad}</span>
-                                    <span>${(item.precio * item.cantidad).toLocaleString("es-CO")}</span>
-                                </div>
-                            ))}
-                            <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}>
-                                <span>Total:</span>
-                                <span>${totalCarrito.toLocaleString("es-CO")}</span>
-                            </div>
-                            <p style={{ marginTop: "6px" }}><strong>Método de pago:</strong> {metodoPago}</p>
-                        </div>
-
-                        <button 
-                            className="primary-btn" 
-                            onClick={confirmarCorreoYEnviarWhatsApp}
-                            style={{ backgroundColor: "#25d366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
-                        >
-                            <i className="fa-solid fa-check-circle"></i> Confirmar y Enviar a WhatsApp
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className={`cart-sidebar ${carritoAbierto ? "active" : ""}`}>
-                <div className="cart-header">
-                    <h3>Tu Bolsa de Compras</h3>
-                    <button className="close-btn" onClick={() => setCarritoAbierto(false)}>&times;</button>
-                </div>
-
-                <div className="cart-items">
-                    {carrito.length === 0 ? (
-                        <p style={{ textAlign: "center", color: "var(--rosa-viejo)", marginTop: "20px" }}>
-                            Tu bolsa está vacía.
-                        </p>
-                    ) : (
-                        carrito.map((item) => (
-                            <div key={item.cartId} className="cart-item">
-                                <img src={item.imagen} alt={item.nombre} />
-                                <div className="cart-item-details">
-                                    <h4>{item.nombre}</h4>
-                                    <p>Talla: {item.talla}</p>
-                                    <div className="qty-controls">
-                                        <button className="qty-btn" onClick={() => cambiarCantidadCart(item.cartId, -1)}>-</button>
-                                        <span style={{ fontSize: "0.8rem" }}>{item.cantidad}</span>
-                                        <button className="qty-btn" onClick={() => cambiarCantidadCart(item.cartId, 1)}>+</button>
-                                    </div>
-                                    <p style={{ marginTop: "4px" }}>
-                                        <strong>${(item.precio * item.cantidad).toLocaleString("es-CO")}</strong>
-                                    </p>
-                                </div>
-                                <button className="remove-item-btn" onClick={() => eliminarDelCarrito(item.cartId)}>
-                                    <i className="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        ))
-                    )}
-                </div>
-
-                <div className="cart-footer">
-                    <div className="cart-total-row">
-                        <span>Total:</span>
-                        <span>${totalCarrito.toLocaleString("es-CO")}</span>
-                    </div>
-
-                    <div className="payment-selection-box">
-                        <label className="payment-label">
-                            <i className="fa-solid fa-wallet"></i> Métodos de pago aceptados:
-                        </label>
-                        <select
-                            className="payment-select"
-                            value={metodoPago}
-                            onChange={(e) => setMetodoPago(e.target.value)}
-                        >
-                            <option value="Nequi">Nequi</option>
-                            <option value="Daviplata o billeteras digitales">Daviplata / Billeteras digitales</option>
-                            <option value="Efectivo">Efectivo</option>
-                        </select>
-                    </div>
-
-                    <button className="primary-btn" onClick={procesarPedidoWhatsApp}>
-                        <i className="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
-                    </button>
-                </div>
-            </div>
-        </div>
+        h('div', { className: `cart-sidebar ${carritoAbierto ? "active" : ""}` },
+            h('div', { className: 'cart-header' },
+                h('h3', null, 'Tu Bolsa de Compras'),
+                h('button', { className: 'close-btn', onClick: () => setCarritoAbierto(false) }, '×')
+            ),
+            h('div', { className: 'cart-items' }, 
+                carrito.length === 0 
+                    ? h('p', { style: { textAlign: "center", color: "var(--rosa-viejo)", marginTop: "20px" } }, 'Tu bolsa está vacía.')
+                    : carrito.map((item) => 
+                        h('div', { key: item.cartId, className: 'cart-item' },
+                            h('img', { src: item.imagen, alt: item.nombre }),
+                            h('div', { className: 'cart-item-details' },
+                                h('h4', null, item.nombre),
+                                h('p', null, `Talla: ${item.talla}`),
+                                h('div', { className: 'qty-controls' },
+                                    h('button', { className: 'qty-btn', onClick: () => cambiarCantidadCart(item.cartId, -1) }, '-'),
+                                    h('span', { style: { fontSize: "0.8rem" } }, item.cantidad),
+                                    h('button', { className: 'qty-btn', onClick: () => cambiarCantidadCart(item.cartId, 1) }, '+')
+                                ),
+                                h('p', { style: { marginTop: "4px" } },
+                                    h('strong', null, `$${(item.precio * item.cantidad).toLocaleString("es-CO")}`)
+                                )
+                            ),
+                            h('button', { className: 'remove-item-btn', onClick: () => eliminarDelCarrito(item.cartId) },
+                                h('i', { className: 'fa-solid fa-trash' })
+                            )
+                        )
+                    )
+            ),
+            h('div', { className: 'cart-footer' },
+                h('div', { className: 'cart-total-row' },
+                    h('span', null, 'Total:'),
+                    h('span', null, `$${totalCarrito.toLocaleString("es-CO")}`)
+                ),
+                h('div', { className: 'payment-selection-box' },
+                    h('label', { className: 'payment-label' },
+                        h('i', { className: 'fa-solid fa-wallet' }), ' Métodos de pago aceptados:'
+                    ),
+                    h('select', { className: 'payment-select', value: metodoPago, onChange: (e) => setMetodoPago(e.target.value) },
+                        h('option', { value: 'Nequi' }, 'Nequi'),
+                        h('option', { value: 'Daviplata o billeteras digitales' }, 'Daviplata / Billeteras digitales'),
+                        h('option', { value: 'Efectivo' }, 'Efectivo')
+                    )
+                ),
+                h('button', { className: 'primary-btn', onClick: procesarPedidoWhatsApp },
+                    h('i', { className: 'fa-brands fa-whatsapp' }), ' Pedir por WhatsApp'
+                )
+            )
+        )
     );
 }
 
