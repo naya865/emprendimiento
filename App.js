@@ -6,6 +6,125 @@ import { generarDescripcionConIA } from './services/aiService.js';
 
 const { useState, useEffect, createElement: h } = React;
 
+// --- Componente Asistente Virtual (Chatbot de Estilo N'ROSEN) ---
+function AsistenteChatbot() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [messages, setMessages] = useState([
+        { sender: 'bot', text: '¡Hola! 💖 Bienvenida a N\'ROSEN Studio. ¿Estás buscando algún look especial o necesitas ayuda con tu talla?' }
+    ]);
+    const [input, setInput] = useState('');
+
+    const handleSend = (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+
+        const userMsg = input.trim();
+        const newMessages = [...messages, { sender: 'user', text: userMsg }];
+        setMessages(newMessages);
+        setInput('');
+
+        setTimeout(() => {
+            let botResponse = "¡Qué gran elección! Para ese estilo te sugerimos combinar nuestras prendas en tonos neutros o rosa pastel. ¿Te gustaría que te ayude a armar el carrito?";
+            
+            const lower = userMsg.toLowerCase();
+            if (lower.includes('pago') || lower.includes('transferencia') || lower.includes('nequi') || lower.includes('daviplata')) {
+                botResponse = "Aceptamos transferencias bancarias, Nequi, Daviplata y pagos coordinados directamente por nuestro canal de WhatsApp oficial. 🛍️";
+            } else if (lower.includes('envio') || lower.includes('tiempo') || lower.includes('llegar')) {
+                botResponse = "Realizamos envíos seguros a todo el país. Los tiempos de entrega varían entre 2 a 4 días hábiles según tu ciudad. 🚚";
+            } else if (lower.includes('talla') || lower.includes('medida')) {
+                botResponse = "Manejamos tallas estándar ajustadas a siluetas cómodas y femeninas. Si tienes dudas con alguna prenda específica, escríbenos por WhatsApp y te asesoramos con las medidas exactas. ✨";
+            }
+
+            setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+        }, 600);
+    };
+
+    return h('div', { style: { position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000, fontFamily: 'sans-serif' } },
+        !isOpen ? h('button', {
+            onClick: () => setIsOpen(true),
+            style: {
+                backgroundColor: '#b57a7a',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50px',
+                padding: '12px 20px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+            }
+        }, '💬 Asistente N\'ROSEN') : null,
+
+        isOpen ? h('div', {
+            style: {
+                width: '320px',
+                height: '420px',
+                backgroundColor: '#fff',
+                borderRadius: '12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                border: '1px solid #f0d5d8'
+            }
+        },
+            h('div', {
+                style: {
+                    backgroundColor: '#f8e5e7',
+                    padding: '12px 16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid #f0d5d8'
+                }
+            },
+                h('span', { style: { fontWeight: 'bold', color: '#5c4033' } }, 'Asistente N\'ROSEN Studio'),
+                h('button', {
+                    onClick: () => setIsOpen(false),
+                    style: { background: 'none', border: 'none', fontSize: '16px', cursor: 'pointer', color: '#5c4033' }
+                }, '✕')
+            ),
+            h('div', {
+                style: { flex: 1, padding: '12px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', backgroundColor: '#faf9f6' }
+            },
+                messages.map((m, idx) =>
+                    h('div', {
+                        key: idx,
+                        style: {
+                            alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start',
+                            backgroundColor: m.sender === 'user' ? '#f4ece8' : '#ffffff',
+                            color: '#333',
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            maxWidth: '80%',
+                            fontSize: '14px',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                        }
+                    }, m.text)
+                )
+            ),
+            h('form', {
+                onSubmit: handleSend,
+                style: { display: 'flex', padding: '8px', borderTop: '1px solid #eee', backgroundColor: '#fff' }
+            },
+                h('input', {
+                    type: 'text',
+                    value: input,
+                    onChange: (e) => setInput(e.target.value),
+                    placeholder: 'Escribe tu consulta...',
+                    style: { flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px', outline: 'none', fontSize: '13px' }
+                }),
+                h('button', {
+                    type: 'submit',
+                    style: { marginLeft: '6px', backgroundColor: '#b57a7a', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }
+                }, 'Enviar')
+            )
+        ) : null
+    );
+}
+
 function App() {
     const [productos, setProductos] = useState([]);
 
@@ -638,7 +757,10 @@ function App() {
                     h('i', { className: 'fa-brands fa-whatsapp' }), ' Pedir por WhatsApp'
                 )
             )
-        )
+        ),
+
+        // Asistente Flotante
+        h(AsistenteChatbot, null)
     );
 }
 
