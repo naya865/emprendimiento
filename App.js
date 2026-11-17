@@ -125,6 +125,25 @@ function AsistenteChatbot() {
     );
 }
 
+// Componente reutilizable: tarjeta de producto.
+// Recibe por props el producto, si es admin y las funciones de clic.
+function TarjetaProducto({ producto, esAdmin, onAbrir, onEditar, onEliminar }) {
+    return h('div', { className: 'product-card', onClick: () => onAbrir(producto) },
+        esAdmin ? h('div', { className: 'admin-actions' },
+            h('button', { onClick: (e) => onEditar(producto, e) }, h('i', { className: 'fa-solid fa-pen' })),
+            h('button', { onClick: (e) => onEliminar(producto.id, e) }, h('i', { className: 'fa-solid fa-trash' }))
+        ) : null,
+        h('img', { src: producto.imagen, alt: producto.nombre }),
+        h('div', { className: 'product-card-info' },
+            h('h3', null, producto.nombre),
+            h('p', null, `$${producto.precio.toLocaleString("es-CO")}`)
+        )
+    );
+}
+    
+
+
+
 function App() {
     const [productos, setProductos] = useState([]);
 
