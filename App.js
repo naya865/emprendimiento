@@ -577,10 +577,9 @@ function App() {
                 h('img', { src: "images/WhatsApp Image 2026-07-18 at 9.18.54 AM.jpeg", alt: "Sobre N'ROSEN Studio", className: "about-img" }),
                 h('h3', null, "Sobre N'ROSEN Studio"),
                 h('p', { style: { marginTop: "10px", lineHeight: "1.5", fontSize: "0.85rem" } },
-                    h('strong', null, 'Misión:'), ' Brindar a cada mujer prendas de loungewear, sleepwear y lencería que transmitan elegancia, comodidad y confianza en su día a día.',
-                    h('br', null), h('br', null),
-                    h('strong', null, 'Visión:'), ' Ser la marca referente de moda íntima y descanso por su estilo y calidad superior.'
-                )
+                h('strong', null, 'Misión:'), ' Crear una experiencia de compra digital pensada por y para mujeres, donde cada una encuentre moda, comodidad y estilo para cada momento del día, de la casa a la calle, con una atención cercana y a un mensaje de distancia.',
+                   h('br', null), h('br', null),
+                h('strong', null, 'Visión:'), ' Ser la comunidad de moda femenina digital más cercana de Colombia, uniendo moda, tecnología y comunidad para inspirar a cada mujer a quererse, expresarse y vestirse de confianza.'
             )
         ) : null,
 
