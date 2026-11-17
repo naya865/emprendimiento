@@ -559,18 +559,14 @@ function App() {
             h('div', { className: 'products-grid' }, 
                 productosFiltrados.length === 0 
                     ? h('p', { style: { gridColumn: "1/-1", textAlign: "center", color: "var(--rosa-viejo)" } }, 'No se encontraron productos.')
-                    : productosFiltrados.map((prod) => 
-                        h('div', { key: prod.id, className: 'product-card', onClick: () => abrirDetalleProducto(prod) },
-                            esAdmin ? h('div', { className: 'admin-actions' },
-                                h('button', { onClick: (e) => abrirModalEditarProducto(prod, e) }, h('i', { className: 'fa-solid fa-pen' })),
-                                h('button', { onClick: (e) => eliminarProductoAdmin(prod.id, e) }, h('i', { className: 'fa-solid fa-trash' }))
-                            ) : null,
-                            h('img', { src: prod.imagen, alt: prod.nombre }),
-                            h('div', { className: 'product-card-info' },
-                                h('h3', null, prod.nombre),
-                                h('p', null, `$${prod.precio.toLocaleString("es-CO")}`)
-                            )
-                        )
+                    : productosFiltrados.map((prod) =>                         h(TarjetaProducto, {
+                            key: prod.id,
+                            producto: prod,
+                            esAdmin: esAdmin,
+                            onAbrir: abrirDetalleProducto,
+                            onEditar: abrirModalEditarProducto,
+                            onEliminar: eliminarProductoAdmin
+                        })
                     )
             )
         ),
