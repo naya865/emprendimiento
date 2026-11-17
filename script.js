@@ -1,5 +1,3 @@
-// script.js
-import App from "./App.js";
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+import App from './App.js';
+const { createElement: h } = React;
+ReactDOM.render(h(App), document.getElementById('root'));

@@ -757,4 +757,4 @@ function App() {
     );
 }
 
-ReactDOM.render(h(App), document.getElementById('root'));
+export default App;
