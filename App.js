@@ -126,7 +126,6 @@ function AsistenteChatbot() {
 }
 
 // Componente reutilizable: tarjeta de producto.
-// Recibe por props el producto, si es admin y las funciones de clic.
 function TarjetaProducto({ producto, esAdmin, onAbrir, onEditar, onEliminar }) {
     return h('div', { className: 'product-card', onClick: () => onAbrir(producto) },
         esAdmin ? h('div', { className: 'admin-actions' },
@@ -140,9 +139,6 @@ function TarjetaProducto({ producto, esAdmin, onAbrir, onEditar, onEliminar }) {
         )
     );
 }
-    
-
-
 
 function App() {
     const [productos, setProductos] = useState([]);
@@ -559,7 +555,8 @@ function App() {
             h('div', { className: 'products-grid' }, 
                 productosFiltrados.length === 0 
                     ? h('p', { style: { gridColumn: "1/-1", textAlign: "center", color: "var(--rosa-viejo)" } }, 'No se encontraron productos.')
-                    : productosFiltrados.map((prod) =>                         h(TarjetaProducto, {
+                    : productosFiltrados.map((prod) => 
+                        h(TarjetaProducto, {
                             key: prod.id,
                             producto: prod,
                             esAdmin: esAdmin,
@@ -577,9 +574,10 @@ function App() {
                 h('img', { src: "images/WhatsApp Image 2026-07-18 at 9.18.54 AM.jpeg", alt: "Sobre N'ROSEN Studio", className: "about-img" }),
                 h('h3', null, "Sobre N'ROSEN Studio"),
                 h('p', { style: { marginTop: "10px", lineHeight: "1.5", fontSize: "0.85rem" } },
-                h('strong', null, 'Misión:'), ' Crear una experiencia de compra digital pensada por y para mujeres, donde cada una encuentre moda, comodidad y estilo para cada momento del día, de la casa a la calle, con una atención cercana y a un mensaje de distancia.',
-                   h('br', null), h('br', null),
-                h('strong', null, 'Visión:'), ' Ser la comunidad de moda femenina digital más cercana de Colombia, uniendo moda, tecnología y comunidad para inspirar a cada mujer a quererse, expresarse y vestirse de confianza.'
+                    h('strong', null, 'Misión:'), ' Crear una experiencia de compra digital pensada por y para mujeres, donde cada una encuentre moda, comodidad y estilo para cada momento del día, de la casa a la calle, con una atención cercana y a un mensaje de distancia.',
+                    h('br', null), h('br', null),
+                    h('strong', null, 'Visión:'), ' Ser la comunidad de moda femenina digital más cercana de Colombia, uniendo moda, tecnología y comunidad para inspirar a cada mujer a quererse, expresarse y vestirse de confianza.'
+                )
             )
         ) : null,
 
@@ -677,105 +675,86 @@ function App() {
                     )
                 ),
                 h('h3', null, modalDetalleProducto.nombre),
-                h('p', { style: { color: "var(--rosa-viejo)", fontWeight: 600, margin: "5px 0" } }, `$${modalDetalleProducto.precio.toLocaleString("es-CO")}`),
-                h('p', { style: { fontSize: "0.85rem", marginBottom: "10px" } }, modalDetalleProducto.descripcion),
-                h('label', { style: { fontSize: "0.8rem", fontWeight: 600 } }, 'Talla:'),
-                h('div', { className: 'size-options' }, 
-                    (modalDetalleProducto.tallas || ["ÚNICA"]).map((talla) => 
-                        h('button', { key: talla, className: `size-btn ${tallaSeleccionadaModal === talla ? "active" : ""}`, onClick: () => setTallaSeleccionadaModal(talla) }, talla)
+                h('p', { className: 'modal-price' }, `$${modalDetalleProducto.precio.toLocaleString("es-CO")}`),
+                h('p', { className: 'modal-desc' }, modalDetalleProducto.descripcion),
+                h('div', { style: { margin: "15px 0" } },
+                    h('label', { style: { display: "block", marginBottom: "5px", fontSize: "0.85rem", fontWeight: "bold" } }, 'Selecciona tu Talla:'),
+                    h('div', { style: { display: "flex", gap: "8px", flexWrap: "wrap" } },
+                        (modalDetalleProducto.tallas || ["ÚNICA"]).map((talla) => 
+                            h('button', {
+                                key: talla,
+                                type: 'button',
+                                onClick: () => setTallaSeleccionadaModal(talla),
+                                style: {
+                                    padding: '6px 12px',
+                                    border: `1px solid ${tallaSeleccionadaModal === talla ? '#b57a7a' : '#ddd'}`,
+                                    backgroundColor: tallaSeleccionadaModal === talla ? '#f8e5e7' : '#fff',
+                                    color: '#333',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontWeight: tallaSeleccionadaModal === talla ? 'bold' : 'normal'
+                                }
+                            }, talla)
+                        )
                     )
                 ),
-                h('button', { className: 'primary-btn', onClick: agregarAlCarrito }, 'Añadir a la bolsa')
+                h('button', { className: 'primary-btn', onClick: agregarAlCarrito }, 'Añadir a la Bolsa 🛍️')
             )
+        ) : null,
+
+        carritoAbierto ? h('div', { className: 'cart-sidebar active' },
+            h('div', { className: 'cart-header' },
+                h('h3', null, 'Tu Bolsa N\'ROSEN'),
+                h('button', { className: 'close-btn', onClick: () => setCarritoAbierto(false) }, '×')
+            ),
+            h('div', { className: 'cart-items' },
+                carrito.length === 0 
+                    ? h('p', { style: { textAlign: 'center', color: '#888', marginTop: '20px' } }, 'Tu bolsa está vacía.')
+                    : carrito.map(item => 
+                        h('div', { key: item.cartId, className: 'cart-item' },
+                            h('img', { src: item.imagen, alt: item.nombre }),
+                            h('div', { className: 'cart-item-info' },
+                                h('h4', null, item.nombre),
+                                h('small', null, `Talla: ${item.talla}`),
+                                h('p', null, `$${(item.precio * item.cantidad).toLocaleString("es-CO")}`),
+                                h('div', { className: 'cart-controls' },
+                                    h('button', { onClick: () => cambiarCantidadCart(item.cartId, -1) }, '-'),
+                                    h('span', null, item.cantidad),
+                                    h('button', { onClick: () => cambiarCantidadCart(item.cartId, 1) }, '+'),
+                                    h('button', { onClick: () => eliminarDelCarrito(item.cartId), style: { marginLeft: '10px', color: 'red', background: 'none', border: 'none', cursor: 'pointer' } }, '🗑️')
+                                )
+                            )
+                        )
+                    )
+            ),
+            carrito.length > 0 ? h('div', { className: 'cart-footer' },
+                h('div', { style: { marginBottom: '10px' } },
+                    h('label', { style: { display: 'block', fontSize: '0.8rem', marginBottom: '5px' } }, 'Método de Pago:'),
+                    h('select', { value: metodoPago, onChange: (e) => setMetodoPago(e.target.value), className: 'form-input', style: { padding: '6px' } },
+                        h('option', { value: 'Nequi' }, 'Nequi'),
+                        h('option', { value: 'Daviplata' }, 'Daviplata'),
+                        h('option', { value: 'Transferencia Bancaria' }, 'Transferencia Bancaria')
+                    )
+                ),
+                h('div', { className: 'cart-total' },
+                    h('span', null, 'Total:'),
+                    h('strong', null, `$${totalCarrito.toLocaleString("es-CO")}`)
+                ),
+                h('button', { className: 'primary-btn', onClick: procesarPedidoWhatsApp, style: { width: '100%', marginTop: '10px' } }, 'Pedir por WhatsApp 💬')
+            ) : null
         ) : null,
 
         modalCorreoSimulado ? h('div', { className: 'modal active' },
-            h('div', { className: 'modal-content', style: { padding: "0", overflow: "hidden", maxWidth: "450px" } },
-                h('div', { style: { background: "#4a3e3d", color: "#f4ece8", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" } },
-                    h('span', { style: { fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", letterSpacing: "1px" } }, "N'ROSEN Studio"),
-                    h('button', { className: 'close-btn', onClick: () => setModalCorreoSimulado(false), style: { color: "#f4ece8", position: "static" } }, '×')
-                ),
-                h('div', { style: { padding: "20px" } },
-                    h('div', { style: { background: "var(--rosa-palo)", padding: "15px", borderRadius: "8px", borderLeft: "4px solid var(--rosa-viejo)", marginBottom: "15px" } },
-                        h('h3', { style: { fontSize: "1rem", color: "var(--texto-principal)", marginBottom: "5px" } }, `¿Confirmas tu pedido, ${cliente.nombre}? ✨`),
-                        h('p', { style: { fontSize: "0.8rem", color: "var(--texto-principal)" } },
-                            'Hola ', h('strong', null, cliente.email), '. Hemos recibido los datos de tu orden. Haz clic en confirmar para enviar el correo y proceder con el envío a WhatsApp.'
-                        )
-                    ),
-                    h('div', { style: { fontSize: "0.8rem", marginBottom: "15px", maxHeight: "150px", overflowY: "auto" } },
-                        h('strong', null, 'Resumen de tu compra:'),
-                        carrito.map(item => 
-                            h('div', { key: item.cartId, style: { display: "flex", justifyContent: "space-between", margin: "5px 0", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" } },
-                                h('span', null, `${item.nombre} (Talla: ${item.talla}) x${item.cantidad}`),
-                                h('span', null, `$${(item.precio * item.cantidad).toLocaleString("es-CO")}`)
-                            )
-                        ),
-                        h('div', { style: { display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" } },
-                            h('span', null, 'Total:'),
-                            h('span', null, `$${totalCarrito.toLocaleString("es-CO")}`)
-                        ),
-                        h('p', { style: { marginTop: "6px" } }, h('strong', null, 'Método de pago: '), metodoPago)
-                    ),
-                    h('button', { className: 'primary-btn', onClick: confirmarCorreoYEnviarWhatsApp, style: { backgroundColor: "#25d366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" } },
-                        h('i', { className: 'fa-solid fa-check-circle' }), ' Confirmar y Enviar a WhatsApp'
-                    )
-                )
+            h('div', { className: 'modal-content', style: { textAlign: 'center' } },
+                h('button', { className: 'close-btn', onClick: () => setModalCorreoSimulado(false) }, '×'),
+                h('h3', { style: { color: '#b57a7a' } }, '✨ ¡Pedido Preparado! ✨'),
+                h('p', { style: { margin: '15px 0', fontSize: '0.9rem', lineHeight: '1.5' } }, 'Hemos registrado tus datos y simulado el envío de la confirmación a tu correo. Haz clic en el botón para abrir WhatsApp con el resumen listo.'),
+                h('button', { className: 'primary-btn', onClick: confirmarCorreoYEnviarWhatsApp, style: { background: '#25D366' } }, 'Continuar a WhatsApp 📲')
             )
         ) : null,
 
-        h('div', { className: `cart-sidebar ${carritoAbierto ? "active" : ""}` },
-            h('div', { className: 'cart-header' },
-                h('h3', null, 'Tu Bolsa de Compras'),
-                h('button', { className: 'close-btn', onClick: () => setCarritoAbierto(false) }, '×')
-            ),
-            h('div', { className: 'cart-items' }, 
-                carrito.length === 0 
-                    ? h('p', { style: { textAlign: "center", color: "var(--rosa-viejo)", marginTop: "20px" } }, 'Tu bolsa está vacía.')
-                    : carrito.map((item) => 
-                        h('div', { key: item.cartId, className: 'cart-item' },
-                            h('img', { src: item.imagen, alt: item.nombre }),
-                            h('div', { className: 'cart-item-details' },
-                                h('h4', null, item.nombre),
-                                h('p', null, `Talla: ${item.talla}`),
-                                h('div', { className: 'qty-controls' },
-                                    h('button', { className: 'qty-btn', onClick: () => cambiarCantidadCart(item.cartId, -1) }, '-'),
-                                    h('span', { style: { fontSize: "0.8rem" } }, item.cantidad),
-                                    h('button', { className: 'qty-btn', onClick: () => cambiarCantidadCart(item.cartId, 1) }, '+')
-                                ),
-                                h('p', { style: { marginTop: "4px" } },
-                                    h('strong', null, `$${(item.precio * item.cantidad).toLocaleString("es-CO")}`)
-                                )
-                            ),
-                            h('button', { className: 'remove-item-btn', onClick: () => eliminarDelCarrito(item.cartId) },
-                                h('i', { className: 'fa-solid fa-trash' })
-                            )
-                        )
-                    )
-            ),
-            h('div', { className: 'cart-footer' },
-                h('div', { className: 'cart-total-row' },
-                    h('span', null, 'Total:'),
-                    h('span', null, `$${totalCarrito.toLocaleString("es-CO")}`)
-                ),
-                h('div', { className: 'payment-selection-box' },
-                    h('label', { className: 'payment-label' },
-                        h('i', { className: 'fa-solid fa-wallet' }), ' Métodos de pago aceptados:'
-                    ),
-                    h('select', { className: 'payment-select', value: metodoPago, onChange: (e) => setMetodoPago(e.target.value) },
-                        h('option', { value: 'Nequi' }, 'Nequi'),
-                        h('option', { value: 'Daviplata o billeteras digitales' }, 'Daviplata / Billeteras digitales'),
-                        h('option', { value: 'Efectivo' }, 'Efectivo')
-                    )
-                ),
-                h('button', { className: 'primary-btn', onClick: procesarPedidoWhatsApp },
-                    h('i', { className: 'fa-brands fa-whatsapp' }), ' Pedir por WhatsApp'
-                )
-            )
-        ),
-
-        // Asistente Flotante
-        h(AsistenteChatbot, null)
+        h(AsistenteChatbot)
     );
 }
 
-export default App;
+ReactDOM.render(h(App), document.getElementById('root'));

@@ -41,5 +41,5 @@ Abrir https://naya865.github.io/emprendimiento/
 
 Proyecto final de **Jóvenes creaTIvos 2026**.
 
-- **Nayarith López Sánchez** ([@naya865](https://github.com/naya865))
+- **Nayarith Alejandra Giraldo Sanchez** ([@naya865](https://github.com/naya865))
 - **(Yindy vanessa cordoba de castro)** ([@vanessacordobad-max](https://github.com/vanessacordobad-max))
